@@ -1,19 +1,64 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
-#include "pch.h"
+// DelHel.cpp : Defines the initialization routines for the DLL.
+//
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
+#include "pch.h"
+#include "framework.h"
+#include "SlotHel.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
+//
+//TODO: If this DLL is dynamically linked against the MFC DLLs,
+//		any functions exported from this DLL which call into
+//		MFC must have the AFX_MANAGE_STATE macro added at the
+//		very beginning of the function.
+//
+//		For example:
+//
+//		extern "C" BOOL PASCAL EXPORT ExportedFunction()
+//		{
+//			AFX_MANAGE_STATE(AfxGetStaticModuleState());
+//			// normal function body here
+//		}
+//
+//		It is very important that this macro appear in each
+//		function, prior to any calls into MFC.  This means that
+//		it must appear as the first statement within the
+//		function, even before any object variable declarations
+//		as their constructors may generate calls into the MFC
+//		DLL.
+//
+//		Please see MFC Technical Notes 33 and 58 for additional
+//		details.
+//
+
+// CSlotHelApp
+
+BEGIN_MESSAGE_MAP(CSlotHelApp, CWinApp)
+END_MESSAGE_MAP()
+
+
+// CDelHelApp construction
+
+CSlotHelApp::CSlotHelApp()
 {
-    switch (ul_reason_for_call)
-    {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
-    }
-    return TRUE;
+	// TODO: add construction code here,
+	// Place all significant initialization in InitInstance
 }
 
+
+// The one and only CSlotHelApp object
+
+CSlotHelApp theApp;
+
+
+// CSlotHelApp initialization
+
+BOOL CSlotHelApp::InitInstance()
+{
+	CWinApp::InitInstance();
+
+	return TRUE;
+}

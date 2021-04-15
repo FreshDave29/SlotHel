@@ -5,17 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="SlotHel">
-      <UniqueIdentifier>{6cd70ac4-ba32-4019-9d6c-eda9c6a138e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SlotHel\Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -27,13 +16,38 @@
     <ClInclude Include="D:\EuroScopeBeta32a23\PlugInEnvironment\EuroScopePlugIn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SlotHel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSlotHel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>SlotHel\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SlotHel.cpp">
-      <Filter>SlotHel\Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="SlotHel.cpp" />
+    <ClCompile Include="CSlotHel.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="helpers.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SlotHel.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="urlSources.txt" />
   </ItemGroup>
 </Project>
