@@ -77,12 +77,12 @@ BEGIN
     BEGIN
         BLOCK "000904b0"
         BEGIN
-            VALUE "FileDescription", "SlotHel plugin for Euroscope"
+            VALUE "FileDescription", "VACC Austria - SlotHelper Plugin for Euroscope"
             VALUE "FileVersion", "0.0.1.0"
             VALUE "InternalName", "SlotHel.dll"
             VALUE "LegalCopyright", "Copyright (C) 2021 David Leitl, MIT License"
             VALUE "OriginalFilename", "SlotHel.dll"
-            VALUE "ProductName", "SlotHel plugin for Euroscope"
+            VALUE "ProductName", "VACC Austria - SlotHelper Plugin for Euroscope"
             VALUE "ProductVersion", "0.0.1.0"
         END
     END

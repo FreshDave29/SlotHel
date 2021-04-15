@@ -99,10 +99,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>EuroScopePlugInDll.lib;libcurl.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>EuroScopePlugInDll.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>C:\Users\david\source\repos\SlotHel\lib;D:\EuroScopeBeta32a23\PlugInEnvironment;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\EuroScopeBeta32a23\PlugInEnvironment;C:\Users\david\source\repos\SlotHel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -162,6 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\curl\curl.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SlotHel\constants.h" />
     <ClInclude Include="SlotHel\CSlotHel.h" />
     <ClInclude Include="SlotHel\framework.h" />
@@ -169,19 +170,15 @@
     <ClInclude Include="include\Euroscope\EuroScopePlugIn.h" />
     <ClInclude Include="include\lohmann\json.hpp" />
     <ClInclude Include="SlotHel\pch.h" />
-    <ClInclude Include="SlotHel\resource.h" />
+    <ClInclude Include="include\resource.h" />
     <ClInclude Include="SlotHel\SlotHel.h" />
     <ClInclude Include="SlotHel\targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SlotHel\CSlotHel.cpp" />
-    <ClCompile Include="SlotHel\DownloadJson.cpp" />
     <ClCompile Include="SlotHel\helpers.cpp" />
     <ClCompile Include="SlotHel\pch.cpp" />
     <ClCompile Include="SlotHel\SlotHel.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="res\SlotHel.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="urlSources.txt" />
@@ -190,6 +187,13 @@
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SlotHel.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\EuroScopePlugInDll.lib" />
+    <Library Include="lib\libcurl.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

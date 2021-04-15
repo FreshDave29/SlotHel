@@ -28,9 +28,6 @@
     <ClInclude Include="SlotHel\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SlotHel\resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SlotHel\SlotHel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -40,10 +37,15 @@
     <ClInclude Include="include\curl\curl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SlotHel\CSlotHel.cpp" />
-    <ClCompile Include="SlotHel\DownloadJson.cpp" />
     <ClCompile Include="SlotHel\helpers.cpp" />
     <ClCompile Include="SlotHel\pch.cpp" />
     <ClCompile Include="SlotHel\SlotHel.cpp" />
@@ -52,11 +54,15 @@
     <Text Include="urlSources.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="res\SlotHel.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="README.md" />
     <None Include=".gitignore" />
     <None Include=".gitattributes" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SlotHel.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\EuroScopePlugInDll.lib" />
+    <Library Include="lib\libcurl.lib" />
   </ItemGroup>
 </Project>

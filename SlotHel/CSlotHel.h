@@ -12,6 +12,7 @@
 #include "Euroscope/EuroScopePlugIn.h"
 //#include "semver/semver.hpp"
 #include "lohmann/json.hpp"
+#include "curl/curl.h"
 
 #include "constants.h"
 #include "helpers.h"
@@ -32,7 +33,8 @@ private:
 	bool updateCheck;
 	std::future<std::string> latestVersion;
 
-	void ReadSlotData();
+	void ConnectJson();
+	//void ReadSlotData();
 	//void LoadSettings();
 	//void SaveSettings();
 
