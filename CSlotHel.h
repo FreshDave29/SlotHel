@@ -9,13 +9,14 @@
 #include <filesystem>
 #include <algorithm>
 
-#include "EuroScopePlugIn.h"
+#include "Euroscope/EuroScopePlugIn.h"
 //#include "semver/semver.hpp"
-#include "json.hpp"
+#include "lohmann/json.hpp"
 
 #include "constants.h"
 #include "helpers.h"
 
+using json = nlohmann::json;
 using namespace std::chrono_literals;
 
 class CSlotHel : public EuroScopePlugIn::CPlugIn 
@@ -31,6 +32,7 @@ private:
 	bool updateCheck;
 	std::future<std::string> latestVersion;
 
+	void ReadSlotData();
 	//void LoadSettings();
 	//void SaveSettings();
 

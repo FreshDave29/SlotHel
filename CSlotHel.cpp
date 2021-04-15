@@ -42,7 +42,7 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 	if (starts_with(args[0], ".slothel")) {
 		if (args.size() == 1) {
 			std::ostringstream msg;
-			msg << "Version " << PLUGIN_VERSION << " loaded. Available commands: debug, reset, update";
+			msg << "Version " << PLUGIN_VERSION << " loaded. Available commands: load, debug, reset, update";
 
 			this->LogMessage(msg.str());
 
@@ -84,10 +84,39 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 
 			return true;
 		}
+
+		else if (args[1] == "load") {
+			this->LogMessage("Try to load data from web", "Debug");
+
+			this->ReadSlotData();
+
+
+			return true;
+		}
 	}
 
 	return false;
 }
+
+void CSlotHel::ReadSlotData() {
+	json j;
+
+	try {
+		std::string base = SLOT_SYSTEM_PATH;
+		base.append("LOWW.standard.departure.json");
+
+		std::ifstream ifs(base.c_str());
+
+		j = json::parse(ifs);
+	}
+	catch (std::exception e)
+	{
+		this->LogMessage("Failed to read slot data from web system. Error: " + std::string(e.what()), "Error");
+		return;
+	}
+}
+
+
 
 void CSlotHel::LogMessage(std::string message)
 {

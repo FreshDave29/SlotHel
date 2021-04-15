@@ -43,6 +43,7 @@
     <ClCompile Include="CSlotHel.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="helpers.cpp" />
+    <ClCompile Include="DownloadJson.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SlotHel.rc" />
