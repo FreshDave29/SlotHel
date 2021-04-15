@@ -166,7 +166,9 @@
     <ClInclude Include="D:\EuroScopeBeta32a23\PlugInEnvironment\EuroScopePlugIn.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="helpers.h" />
-    <ClInclude Include="json.hpp" />
+    <ClInclude Include="include\curl\include\curl\curl.h" />
+    <ClInclude Include="include\Euroscope\EuroScopePlugIn.h" />
+    <ClInclude Include="include\lohmann\json.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SlotHel.h" />
