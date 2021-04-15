@@ -61,8 +61,4 @@
   <ItemGroup>
     <ResourceCompile Include="SlotHel.rc" />
   </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\EuroScopePlugInDll.lib" />
-    <Library Include="lib\libcurl.lib" />
-  </ItemGroup>
 </Project>
