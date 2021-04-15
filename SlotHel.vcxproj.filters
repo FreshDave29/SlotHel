@@ -7,33 +7,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\EuroScopeBeta32a23\PlugInEnvironment\EuroScopePlugIn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SlotHel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSlotHel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="helpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\lohmann\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,18 +16,47 @@
     <ClInclude Include="include\Euroscope\EuroScopePlugIn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SlotHel\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlotHel\CSlotHel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlotHel\framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlotHel\helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlotHel\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlotHel\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlotHel\SlotHel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlotHel\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SlotHel.cpp" />
-    <ClCompile Include="CSlotHel.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="helpers.cpp" />
-    <ClCompile Include="DownloadJson.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="SlotHel.rc" />
+    <ClCompile Include="SlotHel\CSlotHel.cpp" />
+    <ClCompile Include="SlotHel\DownloadJson.cpp" />
+    <ClCompile Include="SlotHel\helpers.cpp" />
+    <ClCompile Include="SlotHel\pch.cpp" />
+    <ClCompile Include="SlotHel\SlotHel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="urlSources.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\SlotHel.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include=".gitignore" />
+    <None Include=".gitattributes" />
   </ItemGroup>
 </Project>

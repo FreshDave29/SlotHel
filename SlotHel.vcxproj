@@ -161,31 +161,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="constants.h" />
-    <ClInclude Include="CSlotHel.h" />
-    <ClInclude Include="D:\EuroScopeBeta32a23\PlugInEnvironment\EuroScopePlugIn.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="helpers.h" />
+    <ClInclude Include="SlotHel\constants.h" />
+    <ClInclude Include="SlotHel\CSlotHel.h" />
+    <ClInclude Include="SlotHel\framework.h" />
+    <ClInclude Include="SlotHel\helpers.h" />
     <ClInclude Include="include\curl\include\curl\curl.h" />
     <ClInclude Include="include\Euroscope\EuroScopePlugIn.h" />
     <ClInclude Include="include\lohmann\json.hpp" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="SlotHel.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="SlotHel\pch.h" />
+    <ClInclude Include="SlotHel\resource.h" />
+    <ClInclude Include="SlotHel\SlotHel.h" />
+    <ClInclude Include="SlotHel\targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CSlotHel.cpp" />
-    <ClCompile Include="DownloadJson.cpp" />
-    <ClCompile Include="helpers.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="SlotHel.cpp" />
+    <ClCompile Include="SlotHel\CSlotHel.cpp" />
+    <ClCompile Include="SlotHel\DownloadJson.cpp" />
+    <ClCompile Include="SlotHel\helpers.cpp" />
+    <ClCompile Include="SlotHel\pch.cpp" />
+    <ClCompile Include="SlotHel\SlotHel.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SlotHel.rc" />
+    <ResourceCompile Include="res\SlotHel.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="urlSources.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
