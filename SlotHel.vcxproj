@@ -78,6 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>D:\EuroScopeBeta32a23\VACC-Austria\LOVV\Plugins\SlotHel_DEBUG</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -94,7 +95,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -103,7 +105,7 @@
       <AdditionalDependencies>EuroScopePlugInDll.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>D:\EuroScopeBeta32a23\PlugInEnvironment;C:\Users\david\source\repos\SlotHel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\david\source\repos\SlotHel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,6 +119,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,6 +168,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\curl\curl.h" />
+    <ClInclude Include="include\curl\curlver.h" />
+    <ClInclude Include="include\curl\easy.h" />
+    <ClInclude Include="include\curl\mprintf.h" />
+    <ClInclude Include="include\curl\multi.h" />
+    <ClInclude Include="include\curl\options.h" />
+    <ClInclude Include="include\curl\stdcheaders.h" />
+    <ClInclude Include="include\curl\system.h" />
+    <ClInclude Include="include\curl\typecheck-gcc.h" />
+    <ClInclude Include="include\curl\urlapi.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SlotHel\constants.h" />
     <ClInclude Include="SlotHel\CSlotHel.h" />
@@ -192,6 +205,10 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SlotHel.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\EuroScopePlugInDll.lib" />
+    <Library Include="lib\libcurl.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
