@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 
-#include <curl/include/curl.h>
-#include <lohmann/json.h>
+#include <curl/curl.h>
+#include <lohmann/json.hpp>
 
 namespace
 {

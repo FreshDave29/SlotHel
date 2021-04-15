@@ -99,10 +99,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>EuroScopePlugInDll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>EuroScopePlugInDll.lib;libcurl.a;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>D:\EuroScopeBeta32a23\PlugInEnvironment;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\david\source\repos\SlotHel\lib;D:\EuroScopeBeta32a23\PlugInEnvironment;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -161,11 +161,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\curl\curl.h" />
     <ClInclude Include="SlotHel\constants.h" />
     <ClInclude Include="SlotHel\CSlotHel.h" />
     <ClInclude Include="SlotHel\framework.h" />
     <ClInclude Include="SlotHel\helpers.h" />
-    <ClInclude Include="include\curl\include\curl\curl.h" />
     <ClInclude Include="include\Euroscope\EuroScopePlugIn.h" />
     <ClInclude Include="include\lohmann\json.hpp" />
     <ClInclude Include="SlotHel\pch.h" />

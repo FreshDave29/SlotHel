@@ -10,9 +10,6 @@
     <ClInclude Include="include\lohmann\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\curl\include\curl\curl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Euroscope\EuroScopePlugIn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -38,6 +35,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SlotHel\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curl\curl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
