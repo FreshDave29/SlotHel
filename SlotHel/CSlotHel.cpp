@@ -20,7 +20,7 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 	this->RegisterTagItemType("Slot", TAG_ITEM_SLOT);
 	this->RegisterTagItemFunction("Slot Menu", TAG_FUNC_SLOT_MENU);
 
-	this->debug = false;
+	this->debug = true;
 	this->updateCheck = false;
 
 	//this->LoadSettings();
@@ -114,19 +114,21 @@ namespace
 
 void CSlotHel::ConnectJson()
 {
+
 	try {
-		const std::string url("http://date.jsontest.com/");
-
+		
+		const std::string url = SLOT_SYSTEM_PATH + "LOWW.standard.departure.json";
+		
 		CURL* curl = curl_easy_init();
-
+		
 		// Set remote URL.
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
 		// Don't bother trying IPv6, which would increase DNS resolution time.
 		curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
-		// Don't wait forever, time out after 10 seconds.
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+		// Don't wait forever, time out after 5 seconds.
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5);
 
 		// Follow HTTP redirects if necessary.
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -150,16 +152,99 @@ void CSlotHel::ConnectJson()
 
 		if (httpCode == 200)
 		{
-			this->LogMessage("Got successful response from " + url);
+			this->LogDebugMessage("Got successful response from " + url, "Debug");
 
 			// Response looks good - done using Curl now.  Try to parse the results
 			// and print them out.
+
+			ParseJson(json::parse(*httpData.get()));
 		}
+		else
+		{
+			this->LogMessage("TimeOut or No Connection, Code: "+ std::to_string(httpCode) + "-" + url, "Error");
+		}
+		
 	}
 	catch (std::exception e)
 	{
 			this->LogMessage("Failed to read slot data from web system. Error: " + std::string(e.what()), "Error");
 			return;
+	}
+}
+
+void CSlotHel::ParseJson(json j) {
+
+	try{
+		aircraft_list aclist{};
+		slot_list sllist{};
+
+
+		for (auto& obj : j.items()) {
+			this->LogDebugMessage("Start checking lists", "Debug");
+				// Aircraft List
+				if (obj.key() == "aclist") {
+					//if (obj.value()["aclist"].empty()) {
+					//	this->LogDebugMessage("No aircraft on Ground - no Slotlist created", "Debug");
+					//}
+					//else {
+
+						for (auto& ac : obj.value().items()) {
+							this->LogDebugMessage("Aircraft read: " + ac.key(), "Debug");
+
+							aircraft_entry tempAircraft{
+								ac.value()["callsign"],
+								ac.value()["clearance_state"],
+								ac.value()["pushback_state"],
+								ac.value()["taxi_state"],
+								ac.value()["clearance_time"],
+								ac.value()["pushback_time"],
+								ac.value()["taxi_time"]
+							};
+							aclist.entries.push_back(tempAircraft);
+							this->LogDebugMessage("Aircraft added to list: " + ac.key(), "Debug");
+
+						}
+					//}
+				}
+				// Slot List
+				/*if (obj.key() == "slotlist") {
+					for (auto& sl : obj.value().items()) {
+						this->LogDebugMessage("Start reading slot data...", "Debug");
+						auto aciter = aclist.entries.begin();
+
+						if (sl.value()["callsign"] == aciter->callsign) {
+
+							tm ptm;
+
+							time_t rawtime = sl.value()["timestamp_slot"];
+
+							gmtime_s(&ptm, &rawtime);
+
+							slot_entry tempSlot{
+								sl.value()["nr"],
+								rawtime,
+								ptm.tm_year,
+								ptm.tm_mon,
+								ptm.tm_mday,
+								ptm.tm_hour,
+								ptm.tm_min,
+								ptm.tm_sec,
+								sl.value()["callsign"]
+							};
+
+							this->LogDebugMessage("Slot: " + sl.key(), "Debug");
+							this->LogDebugMessage("CS: " + sl.value()["callsign"], "Debug");
+							this->LogDebugMessage("Time: " + std::to_string(ptm.tm_hour) + ":" + std::to_string(ptm.tm_hour), "Debug");
+						}
+					}
+				}*/
+		
+		}
+	}
+	catch (std::exception e)
+	{
+		this->LogMessage("Failed to parse Json Data, Error: " + std::string(e.what()), "Error");
+		return;
 	}
 }
 

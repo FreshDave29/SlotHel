@@ -70,6 +70,9 @@
     <ClInclude Include="include\curl\urlapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SlotHel\slotlist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SlotHel\CSlotHel.cpp" />
@@ -90,6 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\EuroScopePlugInDll.lib" />
-    <Library Include="lib\libcurl.lib" />
+    <Library Include="lib\libcurl_a.lib" />
   </ItemGroup>
 </Project>

@@ -16,6 +16,7 @@
 
 #include "constants.h"
 #include "helpers.h"
+#include "slotlist.h"
 
 using json = nlohmann::json;
 using namespace std::chrono_literals;
@@ -34,10 +35,7 @@ private:
 	std::future<std::string> latestVersion;
 
 	void ConnectJson();
-	//void ReadSlotData();
-	//void LoadSettings();
-	//void SaveSettings();
-
+	void ParseJson(json j);
 
 
 	void LogMessage(std::string message);
