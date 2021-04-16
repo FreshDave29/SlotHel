@@ -205,7 +205,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SlotHel.rc" />
+    <ResourceCompile Include="res\SlotHel.rc" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\EuroScopePlugInDll.lib" />
