@@ -29,6 +29,8 @@ public:
 	virtual ~CSlotHel();
 
 	bool OnCompileCommand(const char* sCommandLine);
+	void SaveSettings();
+	void LoadSettings();
 	void OnTimer(int Counter);
 	void OnGetTagItem(EuroScopePlugIn::CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize);
 	slot_tag ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp);
@@ -37,6 +39,11 @@ private:
 	bool debug;
 	bool updateCheck;
 	bool autoConnect;
+	int min_TSAT;
+	int max_TSAT;
+	int max_TSAT_Warn;
+	int max_CTOT;
+	int updaterate;
 	std::future<std::string> latestVersion;
 
 	aircraft_list aclist{};

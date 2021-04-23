@@ -23,14 +23,22 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 	this->RegisterTagItemType("Slot", TAG_ITEM_SLOT);
 	this->RegisterTagItemFunction("Slot Menu", TAG_FUNC_SLOT_MENU);
 
-	this->debug = true;
+	this->debug = false;
 	this->updateCheck = false;
-	this->autoConnect = false;
+	this->autoConnect = true;
 
-	//this->LoadSettings();
+	this->min_TSAT = -300;
+	this->max_TSAT = 300;
+	this->max_TSAT_Warn = 600;
+	this->updaterate = 30;
+
+	this->LoadSettings();
 
 	if (this->updateCheck) {
 		this->latestVersion = std::async(FetchLatestVersion);
+	}
+	if (this->autoConnect) {
+		this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
 	}
 }
 
@@ -45,7 +53,7 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 	if (starts_with(args[0], ".slothel")) {
 		if (args.size() == 1) {
 			std::ostringstream msg;
-			msg << "Version " << PLUGIN_VERSION << " loaded. Available commands: load, debug, reset, update";
+			msg << "Version " << PLUGIN_VERSION << " loaded. Available commands: load, auto, debug, rate xx (number of seconds)";
 
 			this->LogMessage(msg.str());
 
@@ -54,39 +62,25 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 
 		if (args[1] == "debug") {
 			if (this->debug) {
-				this->LogMessage("Disabling debug mode", "Debug");
+				this->LogMessage("Disabling debug mode", "Config");
 			}
 			else {
-				this->LogMessage("Enabling debug mode", "Debug");
+				this->LogMessage("Enabling debug mode", "Config");
 			}
 
 			this->debug = !this->debug;
 
-			//this->SaveSettings();
-
-			return true;
-		}
-		else if (args[1] == "update") {
-			if (this->updateCheck) {
-				this->LogMessage("Disabling update check", "Update");
-			}
-			else {
-				this->LogMessage("Enabling update check", "Update");
-			}
-
-			this->updateCheck = !this->updateCheck;
-
-			//this->SaveSettings();
+			this->SaveSettings();
 
 			return true;
 		}
 
-		else if (args[1] == "reset") {
+		/*else if (args[1] == "reset") {
 			this->LogMessage("Resetting plugin state", "Config");
 
 
 			return true;
-		}
+		}*/
 
 		else if (args[1] == "load") {
 			this->LogMessage("Try to load data from web", "Debug");
@@ -98,8 +92,26 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		else if (args[1] == "auto") {
 			
 			this->autoConnect = !this->autoConnect;
-			this->LogMessage("Auto Connection toggled: " + std::to_string(this->autoConnect), "Config");
-			
+			if (this->autoConnect) {
+				this->LogMessage("Auto Connection off", "Config");
+			}
+			else {
+				this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
+			}
+
+			this->SaveSettings();
+			return true;
+		}
+		else if (args[1] == "rate") {
+			try {
+				this->updaterate = std::stoi(args[2]);
+				this->LogMessage("Update Rate set to " + std::to_string(this->updaterate));
+			}
+			catch (std::exception e)
+			{
+				this->LogMessage("Wrong parameter for RATE setting, use numeric only", "Error");
+			}
+			this->SaveSettings();
 			return true;
 		}
 	}
@@ -109,7 +121,7 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 
 void CSlotHel::OnTimer(int Counter)
 {
-	if (this->autoConnect && Counter % 30 == 0) {
+	if (this->autoConnect && Counter % this->updaterate == 0) {
 		this->ParseJson(ConnectJson());
 	}
 }
@@ -136,6 +148,48 @@ void CSlotHel::OnGetTagItem(EuroScopePlugIn::CFlightPlan FlightPlan, EuroScopePl
 	}
 }
 
+void CSlotHel::LoadSettings()
+{
+	const char* settings = this->GetDataFromSettings(PLUGIN_NAME);
+	if (settings) {
+		std::vector<std::string> splitSettings = split(settings, SETTINGS_DELIMITER);
+
+		if (splitSettings.size() < 7) {
+			this->LogMessage("Invalid saved settings found, reverting to default.");
+
+			this->SaveSettings();
+
+			return;
+		}
+
+		std::istringstream(splitSettings[0]) >> this->debug;
+		std::istringstream(splitSettings[1]) >> this->autoConnect;
+		std::istringstream(splitSettings[2]) >> this->min_TSAT;
+		std::istringstream(splitSettings[3]) >> this->max_TSAT;
+		std::istringstream(splitSettings[4]) >> this->max_TSAT_Warn;
+		std::istringstream(splitSettings[5]) >> this->max_CTOT;
+		std::istringstream(splitSettings[6]) >> this->updaterate;
+
+		this->LogDebugMessage("Successfully loaded settings.");
+	}
+	else {
+		this->LogMessage("No saved settings found, using defaults.");
+	}
+}
+
+void CSlotHel::SaveSettings()
+{
+	std::ostringstream ss;
+	ss << this->debug << SETTINGS_DELIMITER
+		<< this->autoConnect << SETTINGS_DELIMITER
+		<< this->min_TSAT << SETTINGS_DELIMITER
+		<< this->max_TSAT << SETTINGS_DELIMITER
+		<< this->max_TSAT_Warn << SETTINGS_DELIMITER
+		<< this->max_CTOT << SETTINGS_DELIMITER
+		<< this->updaterate;
+
+	this->SaveDataToSettings(PLUGIN_NAME, "SlotHel settings", ss.str().c_str());
+}
 
 
 namespace
@@ -223,13 +277,9 @@ void CSlotHel::ParseJson(json j) {
 
 
 		for (auto& obj : j.items()) {
-			this->LogDebugMessage("Start checking lists: " + obj.key(), "Debug");
+
 			// Aircraft List
 			if (obj.key() == "aclist") {
-				//if (obj.value()["aclist"].empty()) {
-				//	this->LogDebugMessage("No aircraft on Ground - no Slotlist created", "Debug");
-				//}
-				//else {
 
 				for (auto& [ac, ac2] : obj.value().items()) {
 					this->LogDebugMessage("Aircraft read: " + ac, "Debug");
@@ -254,12 +304,10 @@ void CSlotHel::ParseJson(json j) {
 			// Slot List
 			else if (obj.key() == "slotlist") {
 				for (auto& [sl, sl2] : obj.value().items()) { // slotlist items = slotnumbers
-					//this->LogDebugMessage("Start reading slot data... " + sl.key(), "Debug");	
-					//this->LogDebugMessage("Aircraft in Slot: " + to_string(sl.value()["callsign"]), "Debug");
+
 					if (sl2.value<std::string>("callsign", "") != "") // if slot is not empty
 					{
 						for (auto aciter = this->aclist.entries.begin(); aciter != this->aclist.entries.end(); aciter++) {
-							//this->LogDebugMessage("Checking " + aciter->callsign + " vs " + sl2.value<std::string>("callsign", ""), "Debug");
 
 							if (sl2.value<std::string>("callsign", "") == aciter->callsign) {
 
@@ -351,23 +399,23 @@ slot_tag CSlotHel::ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp) {
 				if (sliter->callsign == aciter->callsign) {
 					// check if aircraft has left gate
 					if (aciter->st_aircraft != "gate") {
-						st.tag = "00/" + sliter->str_ctot;
+						st.tag = "-" + sliter->str_ctot + "-";
 						st.color = TAG_COLOR_GREEN;
 						break;
 					}
 
 					//check time for startup & push
 					double diff = difftime(time(0), sliter->tsat_raw);
-					if (diff >= -300 && diff < 300) {	// 5 min before and after TSAT  - OK
+					if (diff >= this->min_TSAT && diff < this->max_TSAT) {	// 5 min before and after TSAT  - OK
 						st.color = TAG_COLOR_GREEN;
 						break;
 					}
-					else if (diff >= 300 && diff < 600) { // 5 to 10min after TSAT - Warning
+					else if (diff >= this->max_TSAT && diff < this->max_TSAT_Warn) { // 5 to 10min after TSAT - Warning
 						st.color = TAG_COLOR_ORANGE;
 						break;
 					}
-					else if (diff >= 600) { // later than 10 min after TSAT - Overdue, new slot needed
-						st.tag = "-OVERDUE-"; // overdue, for sorting
+					else if (diff >= this->max_TSAT_Warn) { // later than 10 min after TSAT - Overdue, new slot needed
+						st.tag = "OVERDUE"; // overdue, for sorting
 						st.color = TAG_COLOR_RED;
 						break;
 					}
