@@ -18,6 +18,7 @@
 #include "helpers.h"
 #include "slotlist.h"
 
+
 using json = nlohmann::json;
 using namespace std::chrono_literals;
 
@@ -28,13 +29,20 @@ public:
 	virtual ~CSlotHel();
 
 	bool OnCompileCommand(const char* sCommandLine);
+	void OnTimer(int Counter);
+	void OnGetTagItem(EuroScopePlugIn::CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize);
+	slot_tag ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp);
 
 private:
 	bool debug;
 	bool updateCheck;
+	bool autoConnect;
 	std::future<std::string> latestVersion;
 
-	void ConnectJson();
+	aircraft_list aclist{};
+	slot_list sllist{};
+
+	json ConnectJson();
 	void ParseJson(json j);
 
 

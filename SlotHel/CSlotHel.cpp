@@ -1,4 +1,7 @@
 #include "pch.h"
+#include <thread>
+#include <future>
+#include <string>
 
 #include "CSlotHel.h"
 
@@ -22,9 +25,9 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 
 	this->debug = true;
 	this->updateCheck = false;
+	this->autoConnect = false;
 
 	//this->LoadSettings();
-
 
 	if (this->updateCheck) {
 		this->latestVersion = std::async(FetchLatestVersion);
@@ -88,15 +91,52 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		else if (args[1] == "load") {
 			this->LogMessage("Try to load data from web", "Debug");
 
-			this->ConnectJson();
+			this->ParseJson(ConnectJson());
 
-
+			return true;
+		}
+		else if (args[1] == "auto") {
+			
+			this->autoConnect = !this->autoConnect;
+			this->LogMessage("Auto Connection toggled: " + std::to_string(this->autoConnect), "Config");
+			
 			return true;
 		}
 	}
 
 	return false;
 }
+
+void CSlotHel::OnTimer(int Counter)
+{
+	if (this->autoConnect && Counter % 30 == 0) {
+		this->ParseJson(ConnectJson());
+	}
+}
+
+void CSlotHel::OnGetTagItem(EuroScopePlugIn::CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize)
+{
+
+	slot_tag st = this->ProcessFlightPlan(FlightPlan);
+
+	switch (ItemCode) {
+	case TAG_ITEM_SLOT:
+		if (st.tag.empty()) {
+			strcpy_s(sItemString, 16, "No Slot");
+		}
+		else
+		{
+			strcpy_s(sItemString, 16, st.tag.c_str());
+		}
+
+		*pColorCode = EuroScopePlugIn::TAG_COLOR_RGB_DEFINED;
+		*pRGB = st.color;
+
+		break;
+	}
+}
+
+
 
 namespace
 {
@@ -112,15 +152,17 @@ namespace
 	}
 }
 
-void CSlotHel::ConnectJson()
+
+json CSlotHel::ConnectJson()
 {
 
 	try {
-		
-		const std::string url = SLOT_SYSTEM_PATH + "LOWW.standard.departure.json";
-		
+
+		//const std::string url = SLOT_SYSTEM_PATH + "LOWW.standard.departure.json";
+		const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
+
 		CURL* curl = curl_easy_init();
-		
+
 		// Set remote URL.
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
@@ -157,88 +199,128 @@ void CSlotHel::ConnectJson()
 			// Response looks good - done using Curl now.  Try to parse the results
 			// and print them out.
 
-			ParseJson(json::parse(*httpData.get()));
+			return json::parse(*httpData.get());
 		}
 		else
 		{
-			this->LogMessage("TimeOut or No Connection, Code: "+ std::to_string(httpCode) + "-" + url, "Error");
+			this->LogMessage("TimeOut or No Connection, Code: " + std::to_string(httpCode) + "-" + url, "Error");
+			return NULL;
 		}
-		
+
 	}
 	catch (std::exception e)
 	{
-			this->LogMessage("Failed to read slot data from web system. Error: " + std::string(e.what()), "Error");
-			return;
+		this->LogMessage("Failed to read slot data from web system. Error: " + std::string(e.what()), "Error");
+		return NULL;
 	}
 }
 
 void CSlotHel::ParseJson(json j) {
 
-	try{
-		aircraft_list aclist{};
-		slot_list sllist{};
+	try {
+		this->aclist.entries.clear(); //reset all lists to read new data
+		this->sllist.entries.clear(); //reset all lists to read new data
 
 
 		for (auto& obj : j.items()) {
-			this->LogDebugMessage("Start checking lists", "Debug");
-				// Aircraft List
-				if (obj.key() == "aclist") {
-					//if (obj.value()["aclist"].empty()) {
-					//	this->LogDebugMessage("No aircraft on Ground - no Slotlist created", "Debug");
-					//}
-					//else {
+			this->LogDebugMessage("Start checking lists: " + obj.key(), "Debug");
+			// Aircraft List
+			if (obj.key() == "aclist") {
+				//if (obj.value()["aclist"].empty()) {
+				//	this->LogDebugMessage("No aircraft on Ground - no Slotlist created", "Debug");
+				//}
+				//else {
 
-						for (auto& ac : obj.value().items()) {
-							this->LogDebugMessage("Aircraft read: " + ac.key(), "Debug");
+				for (auto& [ac, ac2] : obj.value().items()) {
+					this->LogDebugMessage("Aircraft read: " + ac, "Debug");
 
-							aircraft_entry tempAircraft{
-								ac.value()["callsign"],
-								ac.value()["clearance_state"],
-								ac.value()["pushback_state"],
-								ac.value()["taxi_state"],
-								ac.value()["clearance_time"],
-								ac.value()["pushback_time"],
-								ac.value()["taxi_time"]
-							};
-							aclist.entries.push_back(tempAircraft);
-							this->LogDebugMessage("Aircraft added to list: " + ac.key(), "Debug");
-
-						}
+					//if (ac2.value<std::string>("aircraft_state", "") == "gate") {
+						aircraft_entry tempAircraft{
+							ac2.value<std::string>("callsign",""),
+							ac2.value<std::string>("clearance_state",""),
+							ac2.value<std::string>("pushback_state", ""),
+							ac2.value<std::string>("taxi_state", ""),
+							ac2.value<std::string>("aircraft_state",""),
+							ac2.value<int>("clearance_time",0),
+							ac2.value<int>("pushback_time",0),
+							ac2.value<int>("taxi_time",0)
+						};
+						this->aclist.entries.push_back(tempAircraft);
+						//this->LogDebugMessage("Aircraft added to list: " + ac.key(), "Debug");
 					//}
 				}
-				// Slot List
-				/*if (obj.key() == "slotlist") {
-					for (auto& sl : obj.value().items()) {
-						this->LogDebugMessage("Start reading slot data...", "Debug");
-						auto aciter = aclist.entries.begin();
+				//}
+			}
+			// Slot List
+			else if (obj.key() == "slotlist") {
+				for (auto& [sl, sl2] : obj.value().items()) { // slotlist items = slotnumbers
+					//this->LogDebugMessage("Start reading slot data... " + sl.key(), "Debug");	
+					//this->LogDebugMessage("Aircraft in Slot: " + to_string(sl.value()["callsign"]), "Debug");
+					if (sl2.value<std::string>("callsign", "") != "") // if slot is not empty
+					{
+						for (auto aciter = this->aclist.entries.begin(); aciter != this->aclist.entries.end(); aciter++) {
+							//this->LogDebugMessage("Checking " + aciter->callsign + " vs " + sl2.value<std::string>("callsign", ""), "Debug");
 
-						if (sl.value()["callsign"] == aciter->callsign) {
+							if (sl2.value<std::string>("callsign", "") == aciter->callsign) {
 
-							tm ptm;
+								// read slot time (=ctot) and calculate tsat (ctot-taxi-push)
+								tm ptm_tsat;
+								tm ptm_ctot;
 
-							time_t rawtime = sl.value()["timestamp_slot"];
+								time_t rawtime_ctot = sl2.value<int>("timestamp_slot",0);
+								time_t rawtime_tsat = rawtime_ctot;
 
-							gmtime_s(&ptm, &rawtime);
+								gmtime_s(&ptm_ctot, &rawtime_ctot);
+								gmtime_s(&ptm_tsat, &rawtime_tsat);
 
-							slot_entry tempSlot{
-								sl.value()["nr"],
-								rawtime,
-								ptm.tm_year,
-								ptm.tm_mon,
-								ptm.tm_mday,
-								ptm.tm_hour,
-								ptm.tm_min,
-								ptm.tm_sec,
-								sl.value()["callsign"]
-							};
 
-							this->LogDebugMessage("Slot: " + sl.key(), "Debug");
-							this->LogDebugMessage("CS: " + sl.value()["callsign"], "Debug");
-							this->LogDebugMessage("Time: " + std::to_string(ptm.tm_hour) + ":" + std::to_string(ptm.tm_hour), "Debug");
+								ptm_tsat.tm_min -= aciter->t_taxi;
+								ptm_tsat.tm_min -= aciter->t_pushback;
+
+								rawtime_tsat = _mkgmtime(&ptm_tsat);
+								gmtime_s(&ptm_tsat, &rawtime_tsat);
+
+								// parse times to human readable format
+								char c_ctot[12];
+								char c_tsat[12];
+
+								strftime(c_ctot, 12, "%R", &ptm_ctot);
+								strftime(c_tsat, 12, "%R", &ptm_tsat);
+
+								// create slot entry
+								slot_entry tempSlot{
+									sl2.value<int>("nr",0),
+									rawtime_ctot,
+									ptm_ctot.tm_hour,
+									ptm_ctot.tm_min,
+									rawtime_tsat,
+									ptm_tsat.tm_hour,
+									ptm_tsat.tm_min,
+									sl2.value<std::string>("callsign",""),
+									std::string(c_ctot),
+									std::string(c_tsat)
+								};
+
+								this->sllist.entries.push_back(tempSlot);
+
+								this->LogDebugMessage("Slot: " + sl, "Debug");
+								this->LogDebugMessage("\tCS: " + sl2.value<std::string>("callsign",""), "Debug");
+								this->LogDebugMessage("\tCTOT: " + tempSlot.str_ctot, "Debug");
+								this->LogDebugMessage("\tTSAT: " + tempSlot.str_tsat, "Debug");
+							}
+
 						}
 					}
-				}*/
-		
+					else {
+						//this->LogDebugMessage("Slot " + sl + " empty!", "Debug");
+					}
+				}
+			}
+			else {
+				this->LogDebugMessage("List skipped: " + obj.key(), "Debug");
+				continue;
+			}
+
 		}
 	}
 	catch (std::exception e)
@@ -247,6 +329,60 @@ void CSlotHel::ParseJson(json j) {
 		return;
 	}
 }
+
+slot_tag CSlotHel::ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp) {
+
+	slot_tag st{
+		"",
+		TAG_COLOR_NONE
+	};
+
+	std::string fp_cs = fp.GetCallsign();
+	auto sliter = this->sllist.entries.begin();
+
+	for (auto sliter = this->sllist.entries.begin(); sliter != this->sllist.entries.end(); sliter++) {
+
+		if (sliter->callsign == fp_cs) {
+			st.tag = sliter->str_tsat + "/" + sliter->str_ctot;
+
+			
+			for (auto aciter = this->aclist.entries.begin(); aciter != this->aclist.entries.end(); aciter++) {
+				
+				if (sliter->callsign == aciter->callsign) {
+					// check if aircraft has left gate
+					if (aciter->st_aircraft != "gate") {
+						st.tag = "00/" + sliter->str_ctot;
+						st.color = TAG_COLOR_GREEN;
+						break;
+					}
+
+					//check time for startup & push
+					double diff = difftime(time(0), sliter->tsat_raw);
+					if (diff >= -300 && diff < 300) {	// 5 min before and after TSAT  - OK
+						st.color = TAG_COLOR_GREEN;
+						break;
+					}
+					else if (diff >= 300 && diff < 600) { // 5 to 10min after TSAT - Warning
+						st.color = TAG_COLOR_ORANGE;
+						break;
+					}
+					else if (diff >= 600) { // later than 10 min after TSAT - Overdue, new slot needed
+						st.tag = "-OVERDUE-"; // overdue, for sorting
+						st.color = TAG_COLOR_RED;
+						break;
+					}
+					else {
+						st.color = TAG_COLOR_NONE;
+					}
+				}
+			}
+		}
+	}
+
+	return st;
+
+}
+
 
 
 
