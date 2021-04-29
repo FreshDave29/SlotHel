@@ -53,12 +53,14 @@ If there is no positive response from the webserver within the timeout-window (d
 #### `No Slot`
 
 Info, dark grey
+
 The plugin could not correlate a callsign with a slot, therefor, no data is available.
 
 #### `TSAT/CTOT`
 
 Info:
 grey - if slot TSAT is more than xx min. (default 5) in the future
+
 green - if slot TSAT is less than xx min. (default 5) in the future, but less than xx min. (default 5) behind current UTC.
 
 Warning:
@@ -85,25 +87,33 @@ WIP
 
 
 ### Chat-Commands
+
 To change the default settings, the Plugin provides various chat commands, that can be entered into the EuroScope commandline.
 
 #### `.SlotHel`
+
 Shows the current version and available commands in the Message-Chat of EuroScope.
 
 #### `.SlotHel load`
+
 Triggers a manual data update and retreives the slot data once.
 
 #### `.SlotHel auto`
+
 Default on, rate 30 sec.
 
 Toggles the auto connection, to retreive data automatically with the set rate.
+
 If auto connection is activated, the current update intervall is printed to the user.
 
 #### `.SlotHel rate xx`
+
 xx = intervall between updates in seconds. Default 30
+
 Can be changed to any integer value equal or above 5 sec.,but low values should be used with caution to prevent blocking EuroScope.
 
 #### `.SlotHel debug`
+
 Default off
 
 Toggles extensive debug messages, can be used for development or manual checks which data is retreived and processed. 
