@@ -62,7 +62,7 @@ This repository contains all external dependencies used by the project in their 
 
 - `EuroScope`: EuroScope plugin library
 - `nlohmann/json`: [JSON for Modern C++](https://github.com/nlohmann/json/) ([v3.9.1](https://github.com/nlohmann/json/releases/tag/v3.9.1), [MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT)), used for parsing the airport config JSON
-- `libcurl`: [Library for HTTP Requests in C++](https://curl.se/) ([v7.76.1]https://curl.se/download.html), Open Source, used for requesting the JSON file from Webserver
+- `libcurl`: [Library for HTTP Requests in C++](https://curl.se/) ([v7.76.1](https://curl.se/download.html)), Open Source, used for requesting the JSON file from Webserver
 
 ## License
 
