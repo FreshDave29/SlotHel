@@ -11,9 +11,9 @@ For better slot handling, the times are marked by colors depending on current UT
   - [Installation](#installation)
 - [Usage](#usage)
   - [Basics](#basics)
-  - [Tag items](#tag-items)
-  - [Tag functions](#tag-functions)
-  - [Chat commands](#chat-commands)
+  - [Tag-Items](#tag-items)
+  - [Tag-Functions](#tag-functions)
+  - [Chat-Commands](#chat-commands)
 - [Contributing](#contributing)
   - [Development setup](#development-setup)
 - [License](#license)
@@ -40,6 +40,66 @@ Since `SlotHel` was developed as an EuroScope plugin, it requires a working inst
 7. Assign the `SlotHel / SlotMenu` action as the **Left button** or **Right button** action of any of your tag items as desired. Triggering this function will refresh the slot data from the web.
 8. Close the departure list settings by clicking **OK**
 
+## Usage
+
+### Basics
+
+SlotHel requests the JSON file containing all slot data from VACC-Austria Webserver (Default Path: [vacc-austria]https://www.vacc-austria.org/data/subsystem/slots/). As of current Version (0.0.1) it is a read-only request and therefore does not require any authorization.
+The slot data is parsed and displayed in the EuroScope column.
+
+Per default the request intervall is 30 sec. to update the slot data. To change the intervall, see (#chat-commands).
+If there is no positive response from the webserver within the timeout-window (default: 3 sec.) no data is retreived and the intervall is started again.
+
+####`No Slot`
+Info, dark grey
+The plugin could not correlate a callsign with a slot, therefor, no data is available.
+
+####`TSAT/CTOT`
+Info:
+grey - if slot TSAT is more than xx min. (default 5) in the future
+green - if slot TSAT is less than xx min. (default 5) in the future, but less than xx min. (default 5) behind current UTC.
+
+Warning:
+orange - if slot TSAT is more than xx min. (default 5), but less than xx min. (default 10) behind current UTC.
+
+###`-CTOT-`
+Info:
+green - the aircraft has left the gate (state pushback, taxi, airborne) and can depart within reasonable time.
+
+####`Overdue`
+Error:
+red - if slot TSAT is more than xx min. (default 10) behind current UTC, the slot is overdue and has to be reschedulded via the web-based Slotmanagement. 
+
+
+### Tag-Items
+
+### Tag-Functions
+
+### Chat-Commands
+To change the default settings, the Plugin provides various chat commands, that can be entered into the EuroScope commandline.
+
+#### .SlotHel
+Shows the current version and available commands in the Message-Chat of EuroScope.
+
+#### .SlotHel load
+Triggers a manual data update and retreives the slot data once.
+
+### .SlotHel auto
+Default on, rate 30 sec.
+
+Toggles the auto connection, to retreive data automatically with the set rate.
+If auto connection is activated, the current update intervall is printed to the user.
+
+### .SlotHel rate xx
+xx = intervall between updates in seconds. Default 30
+Can be changed to any integer value equal or above 5 sec.,but low values should be used with caution to prevent blocking EuroScope.
+
+### .SlotHel debug
+Default off
+
+Toggles extensive debug messages, can be used for development or manual checks which data is retreived and processed. 
+
+
 
 ## Contributing
 
@@ -62,7 +122,7 @@ This repository contains all external dependencies used by the project in their 
 
 - `EuroScope`: EuroScope plugin library
 - `nlohmann/json`: [JSON for Modern C++](https://github.com/nlohmann/json/) ([v3.9.1](https://github.com/nlohmann/json/releases/tag/v3.9.1), [MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT)), used for parsing the airport config JSON
-- `libcurl`: [Library for HTTP Requests in C++](https://curl.se/) ([v7.76.1](https://curl.se/download.html)), Open Source, used for requesting the JSON file from Webserver
+- `libcurl`: [Library for HTTP Requests in C++](https://curl.se/) ([v7.76.1](https://curl.se/download.html), Open Source), used for requesting the JSON file from Webserver
 
 ## License
 

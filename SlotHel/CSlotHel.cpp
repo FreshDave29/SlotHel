@@ -104,8 +104,13 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		}
 		else if (args[1] == "rate") {
 			try {
-				this->updaterate = std::stoi(args[2]);
-				this->LogMessage("Update Rate set to " + std::to_string(this->updaterate));
+				if (std::stoi(args[2]) >= 5) {	// prevent user to set intervall too low!
+					this->updaterate = std::stoi(args[2]);
+					this->LogMessage("Update Rate set to " + std::to_string(this->updaterate));
+				}
+				else {
+					this->LogMessage("Update Rate too low. Use higher value (above 4) to prevent crashing ES.", "Error");
+				}
 			}
 			catch (std::exception e)
 			{
