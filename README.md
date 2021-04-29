@@ -24,6 +24,7 @@ For better slot handling, the times are marked by colors depending on current UT
 
 Since `SlotHel` was developed as an EuroScope plugin, it requires a working installation [EuroScope](https://euroscope.hu/). The initial development was started using EuroScope version [`v3.2.1.26`](https://www.euroscope.hu/wp/2021/02/07/v3-2-1-26/), although the plugin should most likely also work fine with previous and later versions. As development continues, compatibility to the latest **beta** versions of EuroScope will be maintained as long as possible and feasible.
 
+
 ### Installation
 
 1. Download the latest release (`SlotHel.zip`) of `SlotHel` from the [**Releases**](https://github.com/FreshDave29/SlotHel/releases/latest) section of this repository
@@ -42,6 +43,7 @@ Since `SlotHel` was developed as an EuroScope plugin, it requires a working inst
 
 ## Usage
 
+
 ### Basics
 
 SlotHel requests the JSON file containing all slot data from VACC-Austria Webserver (Default Path: [vacc-austria]https://www.vacc-austria.org/data/subsystem/slots/). As of current Version (0.0.1) it is a read-only request and therefore does not require any authorization.
@@ -50,26 +52,34 @@ The slot data is parsed and displayed in the EuroScope column.
 Per default the request intervall is 30 sec. to update the slot data. To change the intervall, see (#chat-commands).
 If there is no positive response from the webserver within the timeout-window (default: 3 sec.) no data is retreived and the intervall is started again.
 
+
 #### `No Slot`
 
 Info, dark grey
 
 The plugin could not correlate a callsign with a slot, therefor, no data is available.
 
+
 #### `TSAT/CTOT`
 
 Info:
+
 grey - if slot TSAT is more than xx min. (default 5) in the future
 
 green - if slot TSAT is less than xx min. (default 5) in the future, but less than xx min. (default 5) behind current UTC.
 
+
 Warning:
+
 orange - if slot TSAT is more than xx min. (default 5), but less than xx min. (default 10) behind current UTC.
+
 
 #### `-CTOT-`
 
 Info:
+
 green - the aircraft has left the gate (state pushback, taxi, airborne) and can depart within reasonable time.
+
 
 #### `Overdue`
 
