@@ -53,6 +53,7 @@ Per default the request intervall is 30 sec. to update the slot data. To change 
 If there is no positive response from the webserver within the timeout-window (default: 3 sec.) no data is retreived and the intervall is started again.
 
 TSAT = Target Start Up Approval Time -> UTC time, when the aircraft is allowed to start engines (and therefore usually will be commencing pushback)
+
 CTOT = Calculated Take Off Time -> UTC time, when the aircraft will commence take-off
 
 #### `No Slot`
