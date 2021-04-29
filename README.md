@@ -64,7 +64,7 @@ green - if slot TSAT is less than xx min. (default 5) in the future, but less th
 Warning:
 orange - if slot TSAT is more than xx min. (default 5), but less than xx min. (default 10) behind current UTC.
 
-### `-CTOT-`
+#### `-CTOT-`
 
 Info:
 green - the aircraft has left the gate (state pushback, taxi, airborne) and can depart within reasonable time.
