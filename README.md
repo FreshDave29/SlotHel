@@ -50,11 +50,13 @@ The slot data is parsed and displayed in the EuroScope column.
 Per default the request intervall is 30 sec. to update the slot data. To change the intervall, see (#chat-commands).
 If there is no positive response from the webserver within the timeout-window (default: 3 sec.) no data is retreived and the intervall is started again.
 
-####`No Slot`
+#### `No Slot`
+
 Info, dark grey
 The plugin could not correlate a callsign with a slot, therefor, no data is available.
 
-####`TSAT/CTOT`
+#### `TSAT/CTOT`
+
 Info:
 grey - if slot TSAT is more than xx min. (default 5) in the future
 green - if slot TSAT is less than xx min. (default 5) in the future, but less than xx min. (default 5) behind current UTC.
@@ -62,19 +64,23 @@ green - if slot TSAT is less than xx min. (default 5) in the future, but less th
 Warning:
 orange - if slot TSAT is more than xx min. (default 5), but less than xx min. (default 10) behind current UTC.
 
-###`-CTOT-`
+### `-CTOT-`
+
 Info:
 green - the aircraft has left the gate (state pushback, taxi, airborne) and can depart within reasonable time.
 
-####`Overdue`
+#### `Overdue`
+
 Error:
 red - if slot TSAT is more than xx min. (default 10) behind current UTC, the slot is overdue and has to be reschedulded via the web-based Slotmanagement. 
 
 
 ### Tag-Items
+
 WIP
 
 ### Tag-Functions
+
 WIP
 
 
