@@ -31,12 +31,39 @@ Since `SlotHel` was developed as an EuroScope plugin, it requires a working inst
 3. Start EuroScope and open the **Plug-ins** dialog in the settings menu (**OTHER SET**)
 ![Plug-ins dialog](https://i.imgur.com/SrVtRp9.png)
 4. **Load** the plugin by selecting the `SlotHel.dll` you extracted and ensure the proper version is displayed
-![Load SlotHel](https://imgur.com/a/4EWPANh)
+
 `SlotHel` will also confirm successful initialisation by logging its version to the **Messages** chat:
 `[08:34:10] SlotHel: Version 0.0.1 loaded.`
 5. Close the plugin dialog and open the departure list columns setup dialog (small **S** at the left side of your departure list)
 
-6. (*Optional*) Add the **SlotHel** column to your departure list by clicking **Add Item** and selecting the `SlotHel / Flightplan Validation` **Tag Item type**. Pick a **Header name** and set a **Width** of 4 or greater. This column will display warnings and the status of each flightplan processed by DelHel, but is not strictly required for the plugin to function
-7. Assign the `DelHel / Process FPL` action as the **Left button** or **Right button** action of any of your tag items as desired. Triggering this function processes the selected flightplan using the default settings of `DelHel` (described in more detail in the [Process FPL](#process-fpl) section below)
-8. (*Optional*) Assign the `DelHel / Validation menu` action as the **Left button** or **Right button** action of any of your tag items as desired. Triggering this function opens the flightplan validation menu, allowing for more fine-grained processing of the selected flightplan (described in more detail in the [Validation Menu](#validation-menu) section below)
-9. Close the departure list settings by clicking **OK**
+6. Add the **SlotHel** column to your departure list by clicking **Add Item** and selecting the `SlotHel / Slot` **Tag Item type**. Pick a **Header name** and set a **Width** of 12 or greater. This column will visualize the slot and show corresponding colors for warnings.
+7. Assign the `SlotHel / SlotMenu` action as the **Left button** or **Right button** action of any of your tag items as desired. Triggering this function will refresh the slot data from the web.
+8. Close the departure list settings by clicking **OK**
+
+
+## Contributing
+
+If you have a suggestion for the project or encountered an error, please open an [issue](https://github.com/FreshDave29/SlotHel/issues) on GitHub. Please provide a summary of your idea or problem, optionally with some logs or screenshots and ways to replicate for the latter.  
+The current development state as well as a rough collection of ideas can also be found in the `SlotHel` [project board](https://github.com/FreshDave29/SlotHel/projects/1) on GitHub.
+
+[Pull requests](https://github.com/FreshDave29/SlotHel/pulls) are highly welcome, feel free to extend the plugin's functionality as you see fit and submit a request to this repository to make your changes available to everyone. 
+Please keep in mind this plugin attempts to provide features in a relatively generic way so it can be used by vACCs with different needs - try refraining from "hard-coding" any features that might just apply to a specific airport or vACC.
+
+### Development setup
+
+`DelHel` currently has no external development dependencies aside [Visual Studio](https://visualstudio.microsoft.com/vs/). Initial development started using Visual Studio 2019, although later versions should most likely remain compatible.
+
+To allow for debugging, the project has been configured to launch EuroScope as its debug command. Since your installation path of EuroScope will most likely be different, you **must** set an environment variable `EUROSCOPE_ROOT` to the **directory** EuroScope is installed in (**not** the actual `EuroScope.exe` executable), for instance `E:\EuroScope`.  
+Note: triggering a breakpoint seems to cause both EuroScope and Visual Studio to freak out, resulting in high resource usage and slugging mouse movements, thus only being of limited usefulnes. **NEVER** debug your EuroScope plugin using a live connection as halting EuroScope apparently messes with the VATSIM data feed under certain circumstances.
+
+`DelHel` is compiled using Windows SDK Version 10.0 with a platform toolset for Visual Studio 2019 (v142) using the ISO C++17 Standard.
+
+This repository contains all external dependencies used by the project in their respective `include` and `lib` folders:
+
+- `EuroScope`: EuroScope plugin library
+- `nlohmann/json`: [JSON for Modern C++](https://github.com/nlohmann/json/) ([v3.9.1](https://github.com/nlohmann/json/releases/tag/v3.9.1), [MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT)), used for parsing the airport config JSON
+- `libcurl`: [Library for HTTP Requests in C++](https://curl.se/) ([v7.76.1]https://curl.se/download.html), Open Source, used for requesting the JSON file from Webserver
+
+## License
+
+[MIT License](LICENSE)
