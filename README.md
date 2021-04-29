@@ -72,8 +72,11 @@ red - if slot TSAT is more than xx min. (default 10) behind current UTC, the slo
 
 
 ### Tag-Items
+WIP
 
 ### Tag-Functions
+WIP
+
 
 ### Chat-Commands
 To change the default settings, the Plugin provides various chat commands, that can be entered into the EuroScope commandline.
@@ -84,17 +87,17 @@ Shows the current version and available commands in the Message-Chat of EuroScop
 #### `.SlotHel load`
 Triggers a manual data update and retreives the slot data once.
 
-### `.SlotHel auto`
+#### `.SlotHel auto`
 Default on, rate 30 sec.
 
 Toggles the auto connection, to retreive data automatically with the set rate.
 If auto connection is activated, the current update intervall is printed to the user.
 
-### `.SlotHel rate xx`
+#### `.SlotHel rate xx`
 xx = intervall between updates in seconds. Default 30
 Can be changed to any integer value equal or above 5 sec.,but low values should be used with caution to prevent blocking EuroScope.
 
-### `.SlotHel debug`
+#### `.SlotHel debug`
 Default off
 
 Toggles extensive debug messages, can be used for development or manual checks which data is retreived and processed. 
