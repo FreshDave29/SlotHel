@@ -93,7 +93,7 @@ green - the aircraft has left the gate (state pushback, taxi, airborne) and can 
 ![Overdue Img](https://i.imgur.com/8Mkr2x2.png)
 
 Error:
-red - if slot TSAT is more than xx min. (default 10) behind current UTC, the slot is overdue and has to be reschedulded via the web-based Slotmanagement. 
+red - if slot TSAT is more than xx min. (default 10) behind current UTC, the slot is overdue and has to be rescheduled via the web-based Slotmanagement. 
 
 
 ### Tag-Items
