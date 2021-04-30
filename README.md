@@ -142,6 +142,12 @@ xx = intervall between updates in seconds. Default 30
 
 Can be changed to any integer value equal or above 5 sec.,but low values should be used with caution to prevent blocking EuroScope.
 
+#### `.slothel airport xxxx`
+
+xxxx = 4-letter ICAO of airport, to use the slots from. Default LOWW, in Vacc-Austria the following alternatives are valid: LOWW, LOWI, LOWS
+
+Selection of unknown ICAO results in connection timeouts during data retrieval.
+
 #### `.slothel debug`
 
 Default off
