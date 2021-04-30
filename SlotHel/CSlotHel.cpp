@@ -22,6 +22,7 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 
 	this->RegisterTagItemType("Slot", TAG_ITEM_SLOT);
 	this->RegisterTagItemFunction("Slot Menu", TAG_FUNC_SLOT_MENU);
+	this->RegisterTagItemFunction("Reload Data", TAG_FUNC_SLOT_LOAD);
 
 	this->debug = false;
 	this->updateCheck = false;
@@ -31,6 +32,8 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 	this->max_TSAT = 300;
 	this->max_TSAT_Warn = 600;
 	this->updaterate = 30;
+
+	this->AIRPORT = "LOWW";
 
 	this->LoadSettings();
 
@@ -83,7 +86,7 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		}*/
 
 		else if (args[1] == "load") {
-			this->LogMessage("Try to load data from web", "Debug");
+			this->LogMessage("Try to load data from web...", "Info");
 
 			this->ParseJson(ConnectJson());
 
@@ -92,11 +95,12 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		else if (args[1] == "auto") {
 			
 			this->autoConnect = !this->autoConnect;
+			
 			if (this->autoConnect) {
-				this->LogMessage("Auto Connection off", "Config");
+				this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
 			}
 			else {
-				this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
+				this->LogMessage("Auto Connection off", "Config");
 			}
 
 			this->SaveSettings();
@@ -116,6 +120,14 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 			{
 				this->LogMessage("Wrong parameter for RATE setting, use numeric only", "Error");
 			}
+			this->SaveSettings();
+			return true;
+		}
+		else if (args[1] == "airport") {
+			
+			this->AIRPORT = args[2];
+			this->LogMessage("Active Airport changed to " + this->AIRPORT, "Config");
+
 			this->SaveSettings();
 			return true;
 		}
@@ -153,13 +165,27 @@ void CSlotHel::OnGetTagItem(EuroScopePlugIn::CFlightPlan FlightPlan, EuroScopePl
 	}
 }
 
+void CSlotHel::OnFunctionCall(int FunctionId, const char* sItemString, POINT Pt, RECT Area) {
+	switch (FunctionId) {
+	case TAG_FUNC_SLOT_MENU:
+
+		this->OpenPopupList(Area, "Slot Menu", 1);
+		this->AddPopupListElement("Reload", NULL, TAG_FUNC_SLOT_LOAD, false, EuroScopePlugIn::POPUP_ELEMENT_NO_CHECKBOX, false, false);
+		break;
+	case TAG_FUNC_SLOT_LOAD:
+		this->LogMessage("Try to load data from web...", "Info");
+		this->ParseJson(ConnectJson());
+		break;
+	}
+}
+
 void CSlotHel::LoadSettings()
 {
 	const char* settings = this->GetDataFromSettings(PLUGIN_NAME);
 	if (settings) {
 		std::vector<std::string> splitSettings = split(settings, SETTINGS_DELIMITER);
 
-		if (splitSettings.size() < 7) {
+		if (splitSettings.size() < 8) {
 			this->LogMessage("Invalid saved settings found, reverting to default.");
 
 			this->SaveSettings();
@@ -174,6 +200,7 @@ void CSlotHel::LoadSettings()
 		std::istringstream(splitSettings[4]) >> this->max_TSAT_Warn;
 		std::istringstream(splitSettings[5]) >> this->max_CTOT;
 		std::istringstream(splitSettings[6]) >> this->updaterate;
+		std::istringstream(splitSettings[7]) >> this->AIRPORT;
 
 		this->LogDebugMessage("Successfully loaded settings.");
 	}
@@ -191,7 +218,8 @@ void CSlotHel::SaveSettings()
 		<< this->max_TSAT << SETTINGS_DELIMITER
 		<< this->max_TSAT_Warn << SETTINGS_DELIMITER
 		<< this->max_CTOT << SETTINGS_DELIMITER
-		<< this->updaterate;
+		<< this->updaterate << SETTINGS_DELIMITER
+		<< this->AIRPORT;
 
 	this->SaveDataToSettings(PLUGIN_NAME, "SlotHel settings", ss.str().c_str());
 }
@@ -217,8 +245,8 @@ json CSlotHel::ConnectJson()
 
 	try {
 
-		//const std::string url = SLOT_SYSTEM_PATH + "LOWW.standard.departure.json";
-		const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
+		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".standard.departure.json";
+		//const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
 
 		CURL* curl = curl_easy_init();
 
@@ -289,22 +317,30 @@ void CSlotHel::ParseJson(json j) {
 				for (auto& [ac, ac2] : obj.value().items()) {
 					this->LogDebugMessage("Aircraft read: " + ac, "Debug");
 
-					//if (ac2.value<std::string>("aircraft_state", "") == "gate") {
-						aircraft_entry tempAircraft{
-							ac2.value<std::string>("callsign",""),
-							ac2.value<std::string>("clearance_state",""),
-							ac2.value<std::string>("pushback_state", ""),
-							ac2.value<std::string>("taxi_state", ""),
-							ac2.value<std::string>("aircraft_state",""),
-							ac2.value<int>("clearance_time",0),
-							ac2.value<int>("pushback_time",0),
-							ac2.value<int>("taxi_time",0)
-						};
-						this->aclist.entries.push_back(tempAircraft);
-						//this->LogDebugMessage("Aircraft added to list: " + ac.key(), "Debug");
-					//}
+					
+					aircraft_entry tempAircraft{
+						ac2.value<std::string>("callsign",""),
+						ac2.value<std::string>("clearance_state",""),
+						ac2.value<std::string>("pushback_state", ""),
+						ac2.value<std::string>("taxi_state", ""),
+						ac2.value<std::string>("aircraft_state",""),
+						ac2.value<int>("clearance_time",0),
+						0, //ac2.value<int>("pushback_time",0), // Due to incorrect datatypes in JSON - workaround
+						ac2.value<int>("taxi_time",0)
+					};
+
+					// Workaround to prevent errors due to wrong datatype (pushback time is provided as string)
+					if (ac2.value<std::string>("aircraft_state", "") != "gate") {
+						tempAircraft.t_pushback = ac2.value<int>("pushback_time", 0);
+					}
+					else {
+						tempAircraft.t_pushback = std::stoi(ac2.value<std::string>("pushback_time", ""));
+					}
+
+					this->aclist.entries.push_back(tempAircraft);
+
 				}
-				//}
+
 			}
 			// Slot List
 			else if (obj.key() == "slotlist") {

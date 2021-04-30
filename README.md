@@ -38,8 +38,9 @@ Since `SlotHel` was developed as an EuroScope plugin, it requires a working inst
 5. Close the plugin dialog and open the departure list columns setup dialog (small **S** at the left side of your departure list)
 
 6. Add the **SlotHel** column to your departure list by clicking **Add Item** and selecting the `SlotHel / Slot` **Tag Item type**. Pick a **Header name** and set a **Width** of 12 or greater. This column will visualize the slot and show corresponding colors for warnings.
-7. Assign the `SlotHel / SlotMenu` action as the **Left button** or **Right button** action of any of your tag items as desired. Triggering this function will refresh the slot data from the web.
-8. Close the departure list settings by clicking **OK**
+7. Assign the `SlotHel / Reload Data` action as the **Left button** or **Right button** action of any of your tag items as desired. Triggering this function will refresh the slot data from the web.
+8. (Optional) Assign the `SlotHel / Slot Menu` action as **Left button** or **Right button** action for detailed actions (currently no additional functions).
+9. Close the departure list settings by clicking **OK**
 
 ## Usage
 
@@ -92,11 +93,22 @@ red - if slot TSAT is more than xx min. (default 10) behind current UTC, the slo
 
 ### Tag-Items
 
-WIP
+Tag items are used to display information about flightplans in aircraft lists, such as the departure or arrival list.
+
+At the moment, SlotHel only adds one (optional) tag item to EuroScope:
+
+#### Slot
+The `Slot` tag item displays the correlated slot data for this callsign, according to previous mentioned formats.
 
 ### Tag-Functions
 
-WIP
+Tag functions are used to trigger plugin functionality via a flightplan tag in aircraft lists, such as the departure or arrival list.
+
+At the moment, SlotHel adds functions for processing FPLs which can be added as an action to any tag item desirable (although using them with the `Slot` tag item is recommended):
+
+#### Reload
+
+Triggers a manual reload of the slot data and updates all shown information. Can be used with auto connection on or off.
 
 
 ### Chat-Commands

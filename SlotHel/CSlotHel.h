@@ -33,6 +33,7 @@ public:
 	void LoadSettings();
 	void OnTimer(int Counter);
 	void OnGetTagItem(EuroScopePlugIn::CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize);
+	void OnFunctionCall(int FunctionId, const char* sItemString, POINT Pt, RECT Area);
 	slot_tag ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp);
 
 private:
@@ -44,6 +45,8 @@ private:
 	int max_TSAT_Warn;
 	int max_CTOT;
 	int updaterate;
+	std::string AIRPORT;
+
 	std::future<std::string> latestVersion;
 
 	aircraft_list aclist{};

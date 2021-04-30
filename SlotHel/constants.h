@@ -12,6 +12,7 @@ const char SETTINGS_DELIMITER = '|';
 const int TAG_ITEM_SLOT = 1;
 
 const int TAG_FUNC_SLOT_MENU = 100;
+const int TAG_FUNC_SLOT_LOAD = 101;
 
 const std::string SLOT_SYSTEM_PATH = "https://www.vacc-austria.org/data/subsystem/slots/";
 
