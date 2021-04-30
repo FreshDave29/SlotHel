@@ -30,13 +30,13 @@ Since `SlotHel` was developed as an EuroScope plugin, it requires a working inst
 1. Download the latest release (`SlotHel.zip`) of `SlotHel` from the [**Releases**](https://github.com/FreshDave29/SlotHel/releases/latest) section of this repository
 2. Extract `SlotHel.dll` and place int somewhere inside your EuroScope sectorfile/profile setup, where other plugins are already set up
 3. Start EuroScope and open the **Plug-ins** dialog in the settings menu (**OTHER SET**)
-![Plug-ins dialog](https://i.imgur.com/SrVtRp9.png)
+![Plug-ins dialog](https://i.imgur.com/BbMhtZB.png)
 4. **Load** the plugin by selecting the `SlotHel.dll` you extracted and ensure the proper version is displayed
 
 `SlotHel` will also confirm successful initialisation by logging its version to the **Messages** chat:
 `[08:34:10] SlotHel: Version 0.0.1 loaded.`
 5. Close the plugin dialog and open the departure list columns setup dialog (small **S** at the left side of your departure list)
-
+![List columns dialog](https://i.imgur.com/lKnGFnA.png)
 6. Add the **SlotHel** column to your departure list by clicking **Add Item** and selecting the `SlotHel / Slot` **Tag Item type**. Pick a **Header name** and set a **Width** of 12 or greater. This column will visualize the slot and show corresponding colors for warnings.
 7. Assign the `SlotHel / Reload Data` action as the **Left button** or **Right button** action of any of your tag items as desired. Triggering this function will refresh the slot data from the web.
 8. (Optional) Assign the `SlotHel / Slot Menu` action as **Left button** or **Right button** action for detailed actions (currently no additional functions).
@@ -57,7 +57,10 @@ TSAT = Target Start Up Approval Time -> UTC time, when the aircraft is allowed t
 
 CTOT = Calculated Take Off Time -> UTC time, when the aircraft will commence take-off
 
+![Departure List](https://i.imgur.com/fA5IEKB.png)
+
 #### `No Slot`
+![No Slot Img](https://i.imgur.com/9ErOKTU.png)
 
 Info, dark grey
 
@@ -65,7 +68,7 @@ The plugin could not correlate a callsign with a slot, therefor, no data is avai
 
 
 #### `TSAT/CTOT`
-
+![TSAT Img](https://i.imgur.com/9ETVLey.png)
 Info:
 
 grey - if slot TSAT is more than xx min. (default 5) in the future
@@ -79,6 +82,7 @@ orange - if slot TSAT is more than xx min. (default 5), but less than xx min. (d
 
 
 #### `-CTOT-`
+![CTOT Img](https://i.imgur.com/knuJYwq.png)
 
 Info:
 
@@ -86,6 +90,7 @@ green - the aircraft has left the gate (state pushback, taxi, airborne) and can 
 
 
 #### `Overdue`
+![Overdue Img](https://i.imgur.com/8Mkr2x2.png)
 
 Error:
 red - if slot TSAT is more than xx min. (default 10) behind current UTC, the slot is overdue and has to be reschedulded via the web-based Slotmanagement. 
