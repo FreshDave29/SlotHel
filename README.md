@@ -115,29 +115,29 @@ Triggers a manual reload of the slot data and updates all shown information. Can
 
 To change the default settings, the Plugin provides various chat commands, that can be entered into the EuroScope commandline.
 
-#### `.SlotHel`
+#### `.slothel`
 
 Shows the current version and available commands in the Message-Chat of EuroScope.
 
-#### `.SlotHel load`
+#### `.slothel load`
 
-Triggers a manual data update and retreives the slot data once.
+Triggers a manual data update and retreives the slot data once. Same function as using the Tag-Functions above.
 
-#### `.SlotHel auto`
+#### `.slothel auto`
 
-Default on, rate 30 sec.
+Default on, rate every 30 sec.
 
 Toggles the auto connection, to retreive data automatically with the set rate.
 
 If auto connection is activated, the current update intervall is printed to the user.
 
-#### `.SlotHel rate xx`
+#### `.slothel rate xx`
 
 xx = intervall between updates in seconds. Default 30
 
 Can be changed to any integer value equal or above 5 sec.,but low values should be used with caution to prevent blocking EuroScope.
 
-#### `.SlotHel debug`
+#### `.slothel debug`
 
 Default off
 
