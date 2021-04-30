@@ -10,7 +10,6 @@
 #include <algorithm>
 
 #include "Euroscope/EuroScopePlugIn.h"
-//#include "semver/semver.hpp"
 #include "lohmann/json.hpp"
 #include "curl/curl.h"
 
