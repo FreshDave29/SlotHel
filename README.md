@@ -86,8 +86,9 @@ orange - if slot TSAT is more than xx min. (default 5), but less than xx min. (d
 
 Info:
 
-green - the aircraft has left the gate (state pushback, taxi, airborne) and can depart within reasonable time.
-
+green - the aircraft has left the gate (EuroScope:TAXI, DEPA == Ground-Radar-Plugin: Taxi, Line-up or Take-off) and can depart within reasonable time.
+CAUTION: States from EuroScope r26 and GroundRadarPlugin V 1.4b4
+Those are about to change with ES r27 or higher and may not yet be compatible.
 
 #### `Overdue`
 ![Overdue Img](https://i.imgur.com/8Mkr2x2.png)

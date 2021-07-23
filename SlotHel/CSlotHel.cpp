@@ -41,7 +41,11 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 		this->latestVersion = std::async(FetchLatestVersion);
 	}
 	if (this->autoConnect) {
-		this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
+		
+		//this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
+		
+		std::string message = "AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.";
+		EuroScopePlugIn::CPlugIn::DisplayUserMessage(PLUGIN_NAME, "Config: ", message.c_str(), true, true, true, false, false);
 	}
 }
 
@@ -108,12 +112,12 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		}
 		else if (args[1] == "rate") {
 			try {
-				if (std::stoi(args[2]) >= 5) {	// prevent user to set intervall too low!
+				if (std::stoi(args[2]) >= 10) {	// prevent user to set intervall too low!
 					this->updaterate = std::stoi(args[2]);
 					this->LogMessage("Update Rate set to " + std::to_string(this->updaterate));
 				}
 				else {
-					this->LogMessage("Update Rate too low. Use higher value (above 4) to prevent crashing ES.", "Error");
+					this->LogMessage("Update Rate too low. Use higher value (above 10) to prevent crashing ES.", "Error");
 				}
 			}
 			catch (std::exception e)
@@ -435,8 +439,9 @@ slot_tag CSlotHel::ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp) {
 			for (auto aciter = this->aclist.entries.begin(); aciter != this->aclist.entries.end(); aciter++) {
 				
 				if (sliter->callsign == aciter->callsign) {
+
 					// check if aircraft has left gate
-					if (aciter->st_aircraft != "gate") {
+					if (strcmp(fp.GetGroundState(), "TAXI") == 0 || strcmp(fp.GetGroundState(), "DEPA") == 0 ){
 						st.tag = "-" + sliter->str_ctot + "-";
 						st.color = TAG_COLOR_GREEN;
 						break;
