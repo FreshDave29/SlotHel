@@ -24,6 +24,7 @@ CThreading::CThreading(){
 
 void CThreading::thread_run() {
 
+	this->curl = curl_easy_init();
 
 
 		while (thr_run.load()) {
@@ -37,7 +38,8 @@ void CThreading::thread_run() {
 			// Do stuff:
 
 			//retrieve temporary json
-			this->json_tmp = this->ConnectJson();
+			this->CurlAuthentification();
+			this->json_tmp = this->ReceiveData();
 
 			//push temp json to mutex protected global
 			{const std::lock_guard<std::mutex> lock(mtx_json);
@@ -50,51 +52,58 @@ void CThreading::thread_run() {
 			cv.wait_for(lk, updaterate.load() * 1000ms);
 
 		}
+		
+		curl_easy_cleanup(this->curl);
 }
 
-json CThreading::ConnectJson()
+void CThreading::CurlAuthentification() {
+
+	//const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
+	//const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".standard.departure.json";
+	const std::string url = SLOT_SYSTEM_PATH + "LOWW.standard.departure.json";
+
+	// the actual code has the actual url string in place of <my_url>
+	curl_easy_setopt(this->curl, CURLOPT_URL, url.c_str());
+
+	struct curl_slist* headers = NULL;
+	headers = curl_slist_append(headers, "Content-Type: application/json");
+
+	// the actual code has the actual token in place of <my_token>
+	headers = curl_slist_append(headers, "Authorization: Basic <my_token>");
+	curl_easy_setopt(this->curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+	curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, headers);
+
+	// Don't bother trying IPv6, which would increase DNS resolution time.
+	curl_easy_setopt(this->curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+	// Don't wait forever, time out after 5 seconds.
+	curl_easy_setopt(this->curl, CURLOPT_TIMEOUT, 5);
+
+	// Follow HTTP redirects if necessary.
+	curl_easy_setopt(this->curl, CURLOPT_FOLLOWLOCATION, 1L);
+}
+
+json CThreading::ReceiveData()
 {
-
 	try {
-		//mtx.lock(); //lock for AIRPORT variable (could have been changed in the meantime by mainthread)
-
-		//const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".standard.departure.json";
-		const std::string url = SLOT_SYSTEM_PATH + "LOWW.standard.departure.json";
-
-		//mtx.unlock();
-
-		//const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
-
-		CURL* curl = curl_easy_init();
-
-		// Set remote URL.
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-
-		// Don't bother trying IPv6, which would increase DNS resolution time.
-		curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-
-		// Don't wait forever, time out after 5 seconds.
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5);
-
-		// Follow HTTP redirects if necessary.
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
 		// Response information.
 		long httpCode(0);
 		std::unique_ptr<std::string> httpData(new std::string());
 
 		// Hook up data handling function.
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
+		curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, callback);
 
 		// Hook up data container (will be passed as the last parameter to the
 		// callback handling function).  Can be any pointer type, since it will
 		// internally be passed as a void pointer.
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, httpData.get());
+		curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, httpData.get());
 
 		// Run our HTTP GET command, capture the HTTP response code, and clean up.
-		curl_easy_perform(curl);
-		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
-		curl_easy_cleanup(curl);
+		curl_easy_perform(this->curl);
+		curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &httpCode);
+
 
 		if (httpCode == 200)
 		{
@@ -106,7 +115,7 @@ json CThreading::ConnectJson()
 		else
 		{	
 			const std::lock_guard<std::mutex> lock(mtx_mes);
-			global_error = "TimeOut or No Connection, Code: " + std::to_string(httpCode) + " - " + url;
+			global_error = "TimeOut or No Connection, Code: " + std::to_string(httpCode);
 
 			return NULL;
 		}
@@ -119,5 +128,32 @@ json CThreading::ConnectJson()
 
 		return NULL;
 	}
+}
+
+void CThreading::SendData() {
+
+	// Response information.
+	long httpCode(0);
+	std::unique_ptr<std::string> httpData(new std::string());
+
+
+	curl_easy_perform(this->curl);
+	curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &httpCode);
+
+	if (httpCode == 200)
+	{
+		const std::lock_guard<std::mutex> lock(mtx_mes);
+		global_message = "SEND - successful";
+
+	}
+	else
+	{
+		const std::lock_guard<std::mutex> lock(mtx_mes);
+		global_error = "SEND - TimeOut or No Connection, Code: " + std::to_string(httpCode) + " - " + SLOT_AUTH_PATH;
+
+	}
+
+
+
 }
 

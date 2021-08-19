@@ -18,10 +18,13 @@ public:
 	//~CThreading();
 
 	void thread_run();
+	CURL* curl;
 
 private:
 	std::string message;
-	json ConnectJson();
+	void CurlAuthentification();
+	json ReceiveData();
+	void SendData();
 	json json_tmp;
 
 };

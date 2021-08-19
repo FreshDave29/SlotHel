@@ -15,6 +15,7 @@ const int TAG_FUNC_SLOT_MENU = 100;
 const int TAG_FUNC_SLOT_LOAD = 101;
 
 const std::string SLOT_SYSTEM_PATH = "https://www.vacc-austria.org/data/subsystem/slots/";
+const std::string SLOT_AUTH_PATH = "";
 
 const COLORREF TAG_COLOR_NONE = 0;
 const COLORREF TAG_COLOR_RED = RGB(200, 0, 0);

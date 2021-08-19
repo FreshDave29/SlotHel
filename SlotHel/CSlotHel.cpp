@@ -153,7 +153,7 @@ void CSlotHel::OnTimer(int Counter)
 		json json_copy = json_stor; }
 		
 		this->ParseJson(json_stor);
-		this->LogDebugMessage("Json has been read");
+		this->LogDebugMessage("Json has been read", "Info");
 	}
 }
 
