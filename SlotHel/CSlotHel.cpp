@@ -245,8 +245,7 @@ json CSlotHel::ConnectJson()
 
 	try {
 
-		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".331.departure.json";
-		//const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
+		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".standard.departure.json";
 
 		CURL* curl = curl_easy_init();
 
@@ -328,8 +327,6 @@ void CSlotHel::ParseJson(json j) {
 						ac2.value<int>("pushback_time",0),
 						ac2.value<int>("taxi_time",0)
 					};
-
-					
 
 					this->aclist.entries.push_back(tempAircraft);
 
