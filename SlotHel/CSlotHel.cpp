@@ -245,7 +245,7 @@ json CSlotHel::ConnectJson()
 
 	try {
 
-		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".standard.departure.json";
+		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".331.departure.json";
 		//const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
 
 		CURL* curl = curl_easy_init();
@@ -325,17 +325,11 @@ void CSlotHel::ParseJson(json j) {
 						ac2.value<std::string>("taxi_state", ""),
 						ac2.value<std::string>("aircraft_state",""),
 						ac2.value<int>("clearance_time",0),
-						0, //ac2.value<int>("pushback_time",0), // Due to incorrect datatypes in JSON - workaround
+						ac2.value<int>("pushback_time",0),
 						ac2.value<int>("taxi_time",0)
 					};
 
-					// Workaround to prevent errors due to wrong datatype (pushback time is provided as string)
-					if (ac2.value<std::string>("aircraft_state", "") != "gate") {
-						tempAircraft.t_pushback = ac2.value<int>("pushback_time", 0);
-					}
-					else {
-						tempAircraft.t_pushback = std::stoi(ac2.value<std::string>("pushback_time", ""));
-					}
+					
 
 					this->aclist.entries.push_back(tempAircraft);
 
