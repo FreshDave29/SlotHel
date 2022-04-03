@@ -131,9 +131,9 @@ Triggers a manual data update and retreives the slot data once. Same function as
 
 #### `.slothel auto`
 
-Default on, rate every 30 sec.
+Default off
 
-Toggles the auto connection, to retreive data automatically with the set rate.
+Toggles the auto connection, to retreive data automatically with the set rate (default 30 sec.)
 
 If auto connection is activated, the current update intervall is printed to the user.
 
