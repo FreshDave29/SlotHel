@@ -149,6 +149,12 @@ xxxx = 4-letter ICAO of airport, to use the slots from. Default LOWW, in Vacc-Au
 
 Selection of unknown ICAO results in connection timeouts during data retrieval.
 
+#### `.slothel event xxxx`
+
+xxxx = the appendix of the URL after the ICAO, this is (for VACC austria) usually ".standard.departure.json"
+
+Change accordingly, to retrieve data from the event slot-list.
+
 #### `.slothel debug`
 
 Default off
