@@ -45,6 +45,7 @@ private:
 	int max_CTOT;
 	int updaterate;
 	std::string AIRPORT;
+	std::string LISTappendix;
 
 	std::future<std::string> latestVersion;
 

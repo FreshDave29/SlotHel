@@ -26,7 +26,7 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 
 	this->debug = false;
 	this->updateCheck = false;
-	this->autoConnect = true;
+	this->autoConnect = false;
 
 	this->min_TSAT = -300;
 	this->max_TSAT = 300;
@@ -34,6 +34,7 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 	this->updaterate = 30;
 
 	this->AIRPORT = "LOWW";
+	this->LISTappendix = ".standard.departure.json";
 
 	this->LoadSettings();
 
@@ -82,13 +83,6 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 			return true;
 		}
 
-		/*else if (args[1] == "reset") {
-			this->LogMessage("Resetting plugin state", "Config");
-
-
-			return true;
-		}*/
-
 		else if (args[1] == "load") {
 			this->LogMessage("Try to load data from web...", "Info");
 
@@ -133,6 +127,13 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 			this->LogMessage("Active Airport changed to " + this->AIRPORT, "Config");
 
 			this->SaveSettings();
+			return true;
+		}
+		else if (args[1] == "event") {
+
+			this->LISTappendix = args[2];
+			this->LogMessage("List-URL temporarily changed to " + SLOT_SYSTEM_PATH + this->AIRPORT + this->LISTappendix, "Config");
+
 			return true;
 		}
 	}
@@ -249,7 +250,7 @@ json CSlotHel::ConnectJson()
 
 	try {
 
-		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + ".standard.departure.json";
+		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + LISTappendix;
 		
 		//const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
 
