@@ -8,10 +8,6 @@
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <atomic>
 
 #include "Euroscope/EuroScopePlugIn.h"
 #include "lohmann/json.hpp"
