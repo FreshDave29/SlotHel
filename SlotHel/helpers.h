@@ -7,10 +7,13 @@
 #include <WinInet.h>
 
 #include "constants.h"
+#include "Euroscope/EuroScopePlugIn.h"
 
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 
+
 std::string FetchLatestVersion();
+
 
 class slothelexception : public std::exception
 {

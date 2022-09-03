@@ -73,12 +73,16 @@
     <ClInclude Include="SlotHel\slotlist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SlotHel\CThreading.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SlotHel\CSlotHel.cpp" />
     <ClCompile Include="SlotHel\helpers.cpp" />
     <ClCompile Include="SlotHel\pch.cpp" />
     <ClCompile Include="SlotHel\SlotHel.cpp" />
+    <ClCompile Include="SlotHel\CThread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="urlSources.txt" />

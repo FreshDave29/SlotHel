@@ -8,6 +8,10 @@
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 #include "Euroscope/EuroScopePlugIn.h"
 #include "lohmann/json.hpp"
@@ -19,6 +23,7 @@
 #include "curl/curl.h"
 
 using json = nlohmann::json;
+
 
 
 class CSlotHel : public EuroScopePlugIn::CPlugIn 
@@ -35,6 +40,7 @@ public:
 	void OnFunctionCall(int FunctionId, const char* sItemString, POINT Pt, RECT Area);
 	slot_tag ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp);
 	bool autoConnect;
+
 	void LogMessage(std::string message);
 	void LogMessage(std::string message, std::string type);
 	void LogDebugMessage(std::string message);
@@ -48,9 +54,9 @@ private:
 	int max_TSAT;
 	int max_TSAT_Warn;
 	int max_CTOT;
-	int updaterate;
 	std::string AIRPORT;
 	std::string LISTappendix;
+
 
 
 	std::future<std::string> latestVersion;
@@ -58,7 +64,6 @@ private:
 	aircraft_list aclist{};
 	slot_list sllist{};
 
-	json ConnectJson();
 	void ParseJson(json j);
 
 };

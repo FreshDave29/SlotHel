@@ -4,6 +4,7 @@
 #include <string>
 
 #include "CSlotHel.h"
+#include "CThreading.h"
 
 //CSlotHel* pPlugin;
 
@@ -31,7 +32,7 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 	this->min_TSAT = -300;
 	this->max_TSAT = 300;
 	this->max_TSAT_Warn = 600;
-	this->updaterate = 30;
+	updaterate.store(30);
 
 	this->AIRPORT = "LOWW";
 	this->LISTappendix = ".standard.departure.json";
@@ -45,7 +46,7 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 		
 		//this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
 		
-		std::string message = "AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.";
+		std::string message = "AutoConnect enabled, every " + std::to_string(updaterate.load()) + "sec.";
 		EuroScopePlugIn::CPlugIn::DisplayUserMessage(PLUGIN_NAME, "Config: ", message.c_str(), true, true, true, false, false);
 	}
 }
@@ -56,6 +57,7 @@ CSlotHel::~CSlotHel()
 
 bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 {
+
 	std::vector<std::string> args = split(sCommandLine);
 
 	if (starts_with(args[0], ".slothel")) {
@@ -86,7 +88,7 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		else if (args[1] == "load") {
 			this->LogMessage("Try to load data from web...", "Info");
 
-			this->ParseJson(ConnectJson());
+			//this->ParseJson(ConnectJson());
 
 			return true;
 		}
@@ -95,7 +97,7 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 			this->autoConnect = !this->autoConnect;
 			
 			if (this->autoConnect) {
-				this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
+				this->LogMessage("AutoConnect enabled, every " + std::to_string(updaterate.load()) + "sec.", "Config");
 			}
 			else {
 				this->LogMessage("Auto Connection off", "Config");
@@ -107,8 +109,8 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 		else if (args[1] == "rate") {
 			try {
 				if (std::stoi(args[2]) >= 10) {	// prevent user to set intervall too low!
-					this->updaterate = std::stoi(args[2]);
-					this->LogMessage("Update Rate set to " + std::to_string(this->updaterate));
+					updaterate.store(std::stoi(args[2]));
+					this->LogMessage("Update Rate set to " + std::to_string(updaterate.load()));
 				}
 				else {
 					this->LogMessage("Update Rate too low. Use higher value (above 10) to prevent crashing ES.", "Error");
@@ -143,8 +145,16 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 
 void CSlotHel::OnTimer(int Counter)
 {
-	if (this->autoConnect && Counter % this->updaterate == 0) {
-		this->ParseJson(ConnectJson());
+	if (Counter % 1 == 0) {
+		this->LogDebugMessageThread();
+		this->LogMessageThread();
+	}
+	if (Counter % 5 == 0) {
+		{const std::lock_guard<std::mutex> lock(mtx_json);
+		json json_copy = json_stor; }
+		
+		this->ParseJson(json_stor);
+		this->LogDebugMessage("Json has been read", "Info");
 	}
 }
 
@@ -178,8 +188,8 @@ void CSlotHel::OnFunctionCall(int FunctionId, const char* sItemString, POINT Pt,
 		this->AddPopupListElement("Reload", NULL, TAG_FUNC_SLOT_LOAD, false, EuroScopePlugIn::POPUP_ELEMENT_NO_CHECKBOX, false, false);
 		break;
 	case TAG_FUNC_SLOT_LOAD:
-		this->LogMessage("Try to load data from web...", "Info");
-		this->ParseJson(ConnectJson());
+		this->LogMessage("Try to load data from web...OFFLINE", "Info");
+		//this->ParseJson(ConnectJson());
 		break;
 	}
 }
@@ -197,6 +207,7 @@ void CSlotHel::LoadSettings()
 
 			return;
 		}
+		int temp_update;
 
 		std::istringstream(splitSettings[0]) >> this->debug;
 		std::istringstream(splitSettings[1]) >> this->autoConnect;
@@ -204,8 +215,10 @@ void CSlotHel::LoadSettings()
 		std::istringstream(splitSettings[3]) >> this->max_TSAT;
 		std::istringstream(splitSettings[4]) >> this->max_TSAT_Warn;
 		std::istringstream(splitSettings[5]) >> this->max_CTOT;
-		std::istringstream(splitSettings[6]) >> this->updaterate;
+		std::istringstream(splitSettings[6]) >> temp_update;
 		std::istringstream(splitSettings[7]) >> this->AIRPORT;
+
+		updaterate.store(temp_update);
 
 		this->LogDebugMessage("Successfully loaded settings.");
 	}
@@ -223,12 +236,11 @@ void CSlotHel::SaveSettings()
 		<< this->max_TSAT << SETTINGS_DELIMITER
 		<< this->max_TSAT_Warn << SETTINGS_DELIMITER
 		<< this->max_CTOT << SETTINGS_DELIMITER
-		<< this->updaterate << SETTINGS_DELIMITER
+		<< updaterate.load() << SETTINGS_DELIMITER
 		<< this->AIRPORT;
 
 	this->SaveDataToSettings(PLUGIN_NAME, "SlotHel settings", ss.str().c_str());
 }
-
 
 namespace
 {
@@ -251,7 +263,6 @@ json CSlotHel::ConnectJson()
 	try {
 
 		const std::string url = SLOT_SYSTEM_PATH + AIRPORT + LISTappendix;
-		
 		//const std::string url = "http://192.168.0.4/data/LOWW.standard.departure.json"; //debug
 
 		CURL* curl = curl_easy_init();
@@ -336,7 +347,8 @@ void CSlotHel::ParseJson(json j) {
 						};
 
 						this->aclist.entries.push_back(tempAircraft);
-					} catch (std::exception e)
+					}
+					catch (std::exception e)
 					{
 						this->LogMessage("Failed to parse Json Data for AC " + ac, "Error");
 					}
@@ -358,7 +370,7 @@ void CSlotHel::ParseJson(json j) {
 								tm ptm_tsat;
 								tm ptm_ctot;
 
-								time_t rawtime_ctot = sl2.value<int>("timestamp_slot",0);
+								time_t rawtime_ctot = sl2.value<int>("timestamp_slot", 0);
 								time_t rawtime_tsat = rawtime_ctot;
 
 								gmtime_s(&ptm_ctot, &rawtime_ctot);
@@ -395,7 +407,7 @@ void CSlotHel::ParseJson(json j) {
 								this->sllist.entries.push_back(tempSlot);
 
 								this->LogDebugMessage("Slot: " + sl, "Debug");
-								this->LogDebugMessage("\tCS: " + sl2.value<std::string>("callsign",""), "Debug");
+								this->LogDebugMessage("\tCS: " + sl2.value<std::string>("callsign", ""), "Debug");
 								this->LogDebugMessage("\tCTOT: " + tempSlot.str_ctot, "Debug");
 								this->LogDebugMessage("\tTSAT: " + tempSlot.str_tsat, "Debug");
 							}
@@ -475,9 +487,6 @@ slot_tag CSlotHel::ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp) {
 
 }
 
-
-
-
 void CSlotHel::LogMessage(std::string message)
 {
 	this->DisplayUserMessage("Message", PLUGIN_NAME, message.c_str(), true, true, true, false, false);
@@ -502,7 +511,9 @@ void CSlotHel::LogDebugMessage(std::string message, std::string type)
 	}
 }
 
+
 /*void CSlotHel::CheckForUpdate()
+
 {
 	try
 	{
@@ -527,9 +538,16 @@ void CSlotHel::LogDebugMessage(std::string message, std::string type)
 void __declspec (dllexport) EuroScopePlugInInit(EuroScopePlugIn::CPlugIn** ppPlugInInstance)
 {
 	*ppPlugInInstance = pPlugin = new CSlotHel();
+	thr_run.store(true);
 }
 
 void __declspec (dllexport) EuroScopePlugInExit(void)
 {
+	// stop thread loops and join
+	thr_run.store(false);
+	cv.notify_one();
+	thread_ingo.join();
+	// exit plugin
 	delete pPlugin;
+
 }
