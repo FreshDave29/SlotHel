@@ -131,9 +131,9 @@ Triggers a manual data update and retreives the slot data once. Same function as
 
 #### `.slothel auto`
 
-Default on, rate every 30 sec.
+Default off
 
-Toggles the auto connection, to retreive data automatically with the set rate.
+Toggles the auto connection, to retreive data automatically with the set rate (default 30 sec.)
 
 If auto connection is activated, the current update intervall is printed to the user.
 
@@ -148,6 +148,12 @@ Can be changed to any integer value equal or above 5 sec.,but low values should 
 xxxx = 4-letter ICAO of airport, to use the slots from. Default LOWW, in Vacc-Austria the following alternatives are valid: LOWW, LOWI, LOWS
 
 Selection of unknown ICAO results in connection timeouts during data retrieval.
+
+#### `.slothel event xxxx`
+
+xxxx = the appendix of the URL after the ICAO, this is (for VACC austria) usually ".standard.departure.json"
+
+Change accordingly, to retrieve data from the event slot-list.
 
 #### `.slothel debug`
 

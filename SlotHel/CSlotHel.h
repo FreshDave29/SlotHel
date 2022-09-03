@@ -20,30 +20,9 @@
 #include "constants.h"
 #include "helpers.h"
 #include "slotlist.h"
+#include "curl/curl.h"
 
 using json = nlohmann::json;
-//using namespace std::chrono_literals;
-
-
-/* ### Global variables for inter-thread communication ### */
-
-std::mutex mtx;
-
-// Storing data from json-feed for further processing
-std::mutex mtx_json;
-json json_stor;
-
-// Message queue for debugging
-std::mutex mtx_mes;
-std::string global_message;
-std::string global_error;
-
-// Running Thread and rate of curl-updates
-std::condition_variable cv;
-std::atomic_int updaterate;
-std::atomic_bool thr_run = ATOMIC_VAR_INIT(true);
-
-
 
 
 
@@ -62,9 +41,6 @@ public:
 	slot_tag ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp);
 	bool autoConnect;
 
-	void LogDebugMessageThread();
-	void LogMessageThread();
-
 	void LogMessage(std::string message);
 	void LogMessage(std::string message, std::string type);
 	void LogDebugMessage(std::string message);
@@ -79,6 +55,8 @@ private:
 	int max_TSAT_Warn;
 	int max_CTOT;
 	std::string AIRPORT;
+	std::string LISTappendix;
+
 
 
 	std::future<std::string> latestVersion;
@@ -88,7 +66,6 @@ private:
 
 	void ParseJson(json j);
 
-	void CheckForUpdate();
 };
 
 CSlotHel* pPlugin;
