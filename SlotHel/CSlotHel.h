@@ -8,18 +8,22 @@
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
 #include "Euroscope/EuroScopePlugIn.h"
 #include "lohmann/json.hpp"
-#include "curl/curl.h"
+
 
 #include "constants.h"
 #include "helpers.h"
 #include "slotlist.h"
-
+#include "curl/curl.h"
 
 using json = nlohmann::json;
-using namespace std::chrono_literals;
+
 
 class CSlotHel : public EuroScopePlugIn::CPlugIn 
 {
@@ -34,11 +38,16 @@ public:
 	void OnGetTagItem(EuroScopePlugIn::CFlightPlan FlightPlan, EuroScopePlugIn::CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize);
 	void OnFunctionCall(int FunctionId, const char* sItemString, POINT Pt, RECT Area);
 	slot_tag ProcessFlightPlan(const EuroScopePlugIn::CFlightPlan& fp);
+	bool autoConnect;
+	void LogMessage(std::string message);
+	void LogMessage(std::string message, std::string type);
+	void LogDebugMessage(std::string message);
+	void LogDebugMessage(std::string message, std::string type);
+
 
 private:
 	bool debug;
 	bool updateCheck;
-	bool autoConnect;
 	int min_TSAT;
 	int max_TSAT;
 	int max_TSAT_Warn;
@@ -46,6 +55,7 @@ private:
 	int updaterate;
 	std::string AIRPORT;
 	std::string LISTappendix;
+
 
 	std::future<std::string> latestVersion;
 
@@ -55,11 +65,6 @@ private:
 	json ConnectJson();
 	void ParseJson(json j);
 
-
-	void LogMessage(std::string message);
-	void LogMessage(std::string message, std::string handler);
-	void LogDebugMessage(std::string message);
-	void LogDebugMessage(std::string message, std::string type);
-
-	void CheckForUpdate();
 };
+
+CSlotHel* pPlugin;

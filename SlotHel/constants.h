@@ -1,7 +1,7 @@
 #pragma once
 
 #define PLUGIN_NAME    "SlotHel"
-#define PLUGIN_VERSION "0.1.0"
+#define PLUGIN_VERSION "0.2.0"
 #define PLUGIN_AUTHOR  "David Leitl"
 #define PLUGIN_LICENSE "(c) 2021, MIT License"
 #define PLUGIN_LATEST_VERSION_URL "https://raw.githubusercontent.com/FreshDave29/SlotHel/master/version.txt"

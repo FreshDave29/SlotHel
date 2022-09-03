@@ -5,7 +5,7 @@
 
 #include "CSlotHel.h"
 
-CSlotHel* pPlugin;
+//CSlotHel* pPlugin;
 
 CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 	EuroScopePlugIn::COMPATIBILITY_CODE,
@@ -502,11 +502,11 @@ void CSlotHel::LogDebugMessage(std::string message, std::string type)
 	}
 }
 
-void CSlotHel::CheckForUpdate()
+/*void CSlotHel::CheckForUpdate()
 {
 	try
 	{
-		/*semver::version latest{ this->latestVersion.get() };
+		semver::version latest{ this->latestVersion.get() };
 		semver::version current{ PLUGIN_VERSION };
 
 		if (latest > current) {
@@ -514,7 +514,7 @@ void CSlotHel::CheckForUpdate()
 			ss << "A new version (" << latest << ") of " << PLUGIN_NAME << " is available, download it at " << PLUGIN_LATEST_DOWNLOAD_URL;
 
 			this->LogMessage(ss.str(), "Update");
-		}*/
+		}
 	}
 	catch (std::exception& e)
 	{
@@ -522,7 +522,7 @@ void CSlotHel::CheckForUpdate()
 	}
 
 	this->latestVersion = std::future<std::string>();
-}
+}*/
 
 void __declspec (dllexport) EuroScopePlugInInit(EuroScopePlugIn::CPlugIn** ppPlugInInstance)
 {
