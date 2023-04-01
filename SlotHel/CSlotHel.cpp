@@ -5,8 +5,6 @@
 
 #include "CSlotHel.h"
 
-//CSlotHel* pPlugin;
-
 CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 	EuroScopePlugIn::COMPATIBILITY_CODE,
 	PLUGIN_NAME,
@@ -42,8 +40,6 @@ CSlotHel::CSlotHel() : EuroScopePlugIn::CPlugIn(
 		this->latestVersion = std::async(FetchLatestVersion);
 	}
 	if (this->autoConnect) {
-		
-		//this->LogMessage("AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.", "Config");
 		
 		std::string message = "AutoConnect enabled, every " + std::to_string(this->updaterate) + "sec.";
 		EuroScopePlugIn::CPlugIn::DisplayUserMessage(PLUGIN_NAME, "Config: ", message.c_str(), true, true, true, false, false);
@@ -135,6 +131,10 @@ bool CSlotHel::OnCompileCommand(const char* sCommandLine)
 			this->LogMessage("List-URL temporarily changed to " + SLOT_SYSTEM_PATH + this->AIRPORT + this->LISTappendix, "Config");
 
 			return true;
+		}
+		else if (args[1] == "standard") {
+			this->LISTappendix = ".standard.departure.json";
+			this->LogMessage("List-URL reset to standard.", "Config");
 		}
 	}
 
